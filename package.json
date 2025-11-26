@@ -22,7 +22,7 @@
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.1",
     "eslint-config-next": "16.0.4",
-    "typescript": "^5.9.3"
+    "typescript": "5.9.3"
   },
   "packageManager": "yarn@4.12.0"
 }
