@@ -1,10 +1,11 @@
 import * as cheerio from 'cheerio'
 import * as chrono from 'chrono-node'
 import {LOCAL_TIMEZONE, LocalDate} from './local-date'
+import {isDate} from 'date-fns'
 
 export type BurnDayValue = {
   date: Date | null
-  value: string
+  value: boolean | null
 }
 
 export type BurnDayRow = {
@@ -82,11 +83,21 @@ export async function getBurnDayStatus(): Promise<{
 
       const area = cells[0]
 
-      const data = headerDates.map((header, i) => ({
-        date: header,
-        value: cells[i + 1] ?? ''
-      }))
-      const filteredData = data.filter((v) => v.date && v.value)
+      const data = headerDates.map((header, i) => {
+        const raw = cells[i + 1]?.trim().toLowerCase()
+
+        let value: boolean | null = null
+        if (raw === 'yes') value = true
+        else if (raw === 'no') value = false
+
+        return {
+          date: header,
+          value
+        }
+      })
+
+      const filteredData = data.filter((r) => isDate(r.date))
+
       // Ignore non-row junk (e.g., repeated headers)
       if (area.toUpperCase() === 'AREA') return
 
