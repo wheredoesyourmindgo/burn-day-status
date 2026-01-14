@@ -9,12 +9,17 @@
     "dev": "vc dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "format": "prettier --config .prettierrc --write './src/**/*.{ts,tsx,css}'",
+    "type-check": "tsc --noEmit -p .",
+    "type-check:watch": "npm run type-check -- --watch"
   },
   "dependencies": {
+    "@date-fns/tz": "^1.4.1",
     "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/postcss": "^4.1.18",
     "cheerio": "^1.1.2",
+    "chrono-node": "^2.9.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",

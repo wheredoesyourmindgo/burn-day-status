@@ -8,7 +8,9 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
+import {format} from 'date-fns'
 import {getBurnDayStatus} from '@/lib/burn-day'
+import {LocalDate} from '@/lib/local-date'
 
 export default async function Home() {
   const data = await getBurnDayStatus()
@@ -46,7 +48,9 @@ export default async function Home() {
               <TableHead>Area</TableHead>
 
               {data.headers.map((h) => (
-                <TableHead key={h}>{h}</TableHead>
+                <TableHead key={h}>
+                  {format(h ?? new LocalDate(), 'MMM d')}
+                </TableHead>
               ))}
             </TableRow>
           </TableHeader>
