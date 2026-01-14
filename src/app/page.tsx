@@ -58,11 +58,14 @@ export default async function Home() {
             {data.rows.map((r) => (
               <TableRow key={r.area}>
                 <TableCell>{r.area}</TableCell>
-                {data.headers.map((_, idx) => (
-                  <TableCell key={`${r.area}-${idx}`}>
-                    {r.data[idx]?.value ?? '-'}
-                  </TableCell>
-                ))}
+                {data.headers.map((_, idx) => {
+                  const val = r.data[idx]?.value ?? 'n/a'
+                  const displayVal =
+                    val === true ? 'Yes' : val === false ? 'No' : 'n/a'
+                  return (
+                    <TableCell key={`${r.area}-${idx}`}>{displayVal}</TableCell>
+                  )
+                })}
               </TableRow>
             ))}
           </TableBody>
