@@ -1,7 +1,9 @@
 import * as cheerio from 'cheerio'
+import * as chrono from 'chrono-node'
+import {LOCAL_TIMEZONE, LocalDate} from './local-date'
 
 export type BurnDayValue = {
-  date: string
+  date: Date | null
   value: string
 }
 
@@ -55,6 +57,13 @@ export async function getBurnDayStatus(): Promise<{
 
   // First header cell should be AREA; remaining are day columns
   const headers = headerCells.slice(1).filter(Boolean)
+  const headerDates = headers.map((h) => {
+    const dt = chrono.parseDate(h, {
+      instant: new LocalDate(),
+      timezone: LOCAL_TIMEZONE
+    })
+    return dt
+  })
 
   const rows: BurnDayRow[] = []
 
@@ -73,7 +82,7 @@ export async function getBurnDayStatus(): Promise<{
 
       const area = cells[0]
 
-      const data = headers.map((header, i) => ({
+      const data = headerDates.map((header, i) => ({
         date: header,
         value: cells[i + 1] ?? ''
       }))
