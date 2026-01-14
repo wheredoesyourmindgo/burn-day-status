@@ -5,7 +5,7 @@ export default function Home() {
     <div>
       <main>
         <div>
-          <Button>My Button</Button>
+          <Button variant="outline">My Button</Button>
         </div>
       </main>
     </div>
