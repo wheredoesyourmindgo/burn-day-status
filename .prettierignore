@@ -1,0 +1,10 @@
+.next/
+.vercel/
+.yarn/
+.vscode/
+out/
+public/
+bundles/
+node_modules/
+coverage/
+dist/
