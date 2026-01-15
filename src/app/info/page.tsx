@@ -78,7 +78,7 @@ export default async function Info() {
         <p className="text-sm text-muted-foreground">{updatedText}</p>
       ) : null} */}
 
-      <div className="overflow-x-auto">
+      <div>
         <Table>
           <TableCaption>{updatedText}</TableCaption>
           <TableHeader>
@@ -95,7 +95,9 @@ export default async function Info() {
           <TableBody>
             {areas.map((area) => (
               <TableRow key={area}>
-                <TableCell>{area}</TableCell>
+                <TableCell className="whitespace-normal break-words align-top">
+                  {area}
+                </TableCell>
 
                 {days.map((day, idx) => {
                   const val = byAreaDay.get(`${area}|${day.id}`) ?? null
