@@ -1,4 +1,4 @@
-import {FlameKindling, Wind, Calendar} from 'lucide-react'
+import {FlameKindling, Wind, Calendar, MapPinned} from 'lucide-react'
 import type {Metadata} from 'next'
 import {isSameDay} from 'date-fns'
 import {LocalDate} from '@/lib/local-date'
@@ -63,10 +63,12 @@ export default async function Home() {
   return (
     <main
       className={`min-h-screen flex flex-col items-center justify-center text-white text-center px-6 ${
-        isBurnDay ? 'bg-red-600' : 'bg-sky-500'
+        isBurnDay
+          ? 'bg-gradient-to-b from-red-500 to-red-700'
+          : 'bg-gradient-to-b from-sky-400 to-sky-600'
       }`}
     >
-      <div className="mb-6">
+      <div className="mb-5">
         {isBurnDay ? (
           <FlameKindling
             className="w-32 h-32 hover:scale-105 active:scale-90 transition-transform"
@@ -80,19 +82,22 @@ export default async function Home() {
         )}
       </div>
 
-      <h1 className="text-4xl font-bold mb-2">
+      <h1 className="text-4xl mb-6 font-display">
         {isBurnDay ? (
-          "It's a Burn Day"
+          "It's a Burn Day!"
         ) : (
           <>
-            Today is <span className="italic">Not</span> a Burn Day
+            Today is <span className="italic">NOT</span> a Burn Day.
           </>
         )}
       </h1>
 
-      <p className="text-lg opacity-90">
-        for {todayEntry?.areaLabel ?? 'Western Nevada County'}
-      </p>
+      {todayEntry?.areaLabel ? (
+        <p className="inline-flex items-center gap-2 text-md opacity-90">
+          <MapPinned className="h-5 w-5 shrink-0" />
+          <span>{todayEntry?.areaLabel}</span>
+        </p>
+      ) : null}
 
       {!isKnown ? (
         <p className="mt-4 text-sm opacity-80">
