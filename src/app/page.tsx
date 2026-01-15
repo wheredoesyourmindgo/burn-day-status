@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 const CalendarToday = ({date}: {date: Date}) => {
   const human = format(date, 'EEEE, MMMM do, yyyy')
   const dayNum = format(date, 'd')
+  const monthAbbrev = format(date, 'MMM')
 
   return (
     <Popover>
@@ -24,10 +25,13 @@ const CalendarToday = ({date}: {date: Date}) => {
           aria-label={`Show date: ${human}`}
         >
           <Calendar
-            className="h-16 w-16 text-white/85 transition-all group-hover:text-white group-hover:scale-105 group-active:scale-95"
+            className="h-16 w-16 text-white/85 transition-transform transition-colors duration-150 ease-out group-hover:text-white group-hover:scale-105 group-active:scale-95"
             strokeWidth={1}
           />
-          <span className="pointer-events-none absolute inset-0 flex items-center justify-center font-bold text-lg translate-y-2.5 text-white/85 transition-colors group-hover:text-white">
+          <span className="pointer-events-none absolute top-[24px] left-[31px] -translate-x-1/2 text-[12px] font-semibold tracking-wide uppercase text-white/85 transition-transform transition-colors duration-150 ease-out group-hover:text-white group-hover:scale-105 group-active:scale-95 font-display">
+            {monthAbbrev}
+          </span>
+          <span className="pointer-events-none absolute inset-0 flex items-center justify-center font-extrabold text-md translate-y-[15px] text-white/85 transition-transform transition-colors duration-150 ease-out group-hover:text-white group-hover:scale-105 group-active:scale-95">
             {dayNum}
           </span>
         </button>
@@ -105,7 +109,7 @@ export default async function Home() {
         </p>
       ) : null}
 
-      <div className="fixed bottom-4 left-4">
+      <div className="fixed top-4 right-4 z-5">
         <CalendarToday date={(todayDay?.date ?? today) as Date} />
       </div>
 
