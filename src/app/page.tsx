@@ -20,7 +20,7 @@ const CalendarToday = ({date}: {date: Date}) => {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="group relative mb-6 inline-flex items-center justify-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+          className="group relative inline-flex items-center justify-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
           aria-label={`Show date: ${human}`}
         >
           <Calendar
