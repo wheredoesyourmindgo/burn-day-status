@@ -88,8 +88,8 @@ export async function getBurnDayStatus(): Promise<{
       if (cells.length < 2) return
 
       const area = cells[0]
-        .replace(/\(see map link below\)/i, '')
-        .replace(/\s+/g, ' ')
+        .replace(/\(see map link below\)/i, '') // Remove parenthetical
+        .replace(/\s+/g, ' ') // Normalize spaces
         .trim()
 
       days.forEach((day, i) => {
