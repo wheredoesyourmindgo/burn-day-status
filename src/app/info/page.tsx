@@ -33,6 +33,8 @@ const NopeIcon = () => {
 }
 
 export const metadata: Metadata = {
+  title: 'Burn Day Information',
+  description: 'Daily burn day information by area',
   robots: {
     index: false,
     follow: false,
