@@ -2,7 +2,7 @@ import {type Metadata} from 'next'
 
 export const metadata: Metadata = {
   title: 'Burn Day Status',
-  description: 'Daily burn day status by area'
+  description: 'Daily burn day status'
 }
 
 export default async function Home() {
