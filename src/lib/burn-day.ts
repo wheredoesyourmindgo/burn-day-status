@@ -3,21 +3,23 @@ import * as chrono from 'chrono-node'
 import {LOCAL_TIMEZONE, LocalDate} from './local-date'
 import {isDate} from 'date-fns'
 
-export type BurnDayValue = {
+export type Day = {
+  id: string
+  label: string
   date: Date | null
-  value: boolean | null
 }
 
-export type BurnDayRow = {
+export type Entry = {
   area: string
-  data: BurnDayValue[]
+  dayId: string
+  value: boolean | null
 }
 
 export async function getBurnDayStatus(): Promise<{
   source: string
   updatedText?: string
-  headers: string[]
-  rows: BurnDayRow[]
+  days: Day[]
+  data: Entry[]
 }> {
   const source = 'https://www.myairdistrict.com/burn-day-status'
 
@@ -56,17 +58,21 @@ export async function getBurnDayStatus(): Promise<{
     .toArray()
     .map((el) => $(el).text().replace(/\s+/g, ' ').trim())
 
-  // First header cell should be AREA; remaining are day columns
-  const headers = headerCells.slice(1).filter(Boolean)
-  const headerDates = headers.map((h) => {
-    const dt = chrono.parseDate(h, {
-      instant: new LocalDate(),
-      timezone: LOCAL_TIMEZONE
-    })
-    return dt
-  })
+  const days: Day[] = headerCells
+    .slice(1)
+    .filter(Boolean)
+    .map((label, idx) => {
+      const date = chrono.parseDate(label, {
+        instant: new LocalDate(),
+        timezone: LOCAL_TIMEZONE
+      })
 
-  const rows: BurnDayRow[] = []
+      const id = isDate(date) ? date.toISOString().slice(0, 10) : `col-${idx}`
+
+      return {id, label, date}
+    })
+
+  const data: Entry[] = []
 
   // Data rows: all rows after the header row
   table
@@ -83,25 +89,24 @@ export async function getBurnDayStatus(): Promise<{
 
       const area = cells[0]
 
-      const data = headerDates.map((header, i) => {
+      days.forEach((day, i) => {
         const raw = cells[i + 1]?.trim().toLowerCase()
 
         let value: boolean | null = null
         if (raw === 'yes') value = true
         else if (raw === 'no') value = false
 
-        return {
-          date: header,
-          value
-        }
-      })
+        if (!day.id) return
 
-      const filteredData = data.filter((r) => isDate(r.date))
+        data.push({
+          area,
+          dayId: day.id,
+          value
+        })
+      })
 
       // Ignore non-row junk (e.g., repeated headers)
       if (area.toUpperCase() === 'AREA') return
-
-      rows.push({area, data: filteredData})
     })
 
   // Pull updated text from the whole document (not the table)
@@ -111,5 +116,5 @@ export async function getBurnDayStatus(): Promise<{
   )
   const updatedText = updatedTextMatch?.[0]
 
-  return {source, updatedText, headers, rows}
+  return {source, updatedText, days, data}
 }

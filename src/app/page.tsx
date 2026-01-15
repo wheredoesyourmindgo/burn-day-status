@@ -10,13 +10,38 @@ import {
 } from '@/components/ui/table'
 import {format} from 'date-fns'
 import {getBurnDayStatus} from '@/lib/burn-day'
-import {LocalDate} from '@/lib/local-date'
+import {Check, X} from 'lucide-react'
+
+const YupIcon = () => {
+  return (
+    <Check
+      strokeWidth={2}
+      className="h-5 w-5 text-green-500 inline-block align-middle"
+      aria-label="Yes"
+    />
+  )
+}
+
+const NopeIcon = () => {
+  return (
+    <X
+      strokeWidth={2}
+      className="h-5 w-5 text-red-500 inline-block align-middle"
+      aria-label="No"
+    />
+  )
+}
 
 export default async function Home() {
-  const data = await getBurnDayStatus()
-  console.log('Burn day data:', JSON.stringify(data, null, 2))
-  // source, updatedText, headers, rows
-  console.log('Headers:', data.headers)
+  const {data, source, updatedText, days} = await getBurnDayStatus()
+  // console.log('Burn day data:', JSON.stringify(data, null, 2))
+  // console.log('Days:', days)
+
+  const areas = Array.from(new Set(data.map((d) => d.area))).sort()
+
+  const byAreaDay = new Map<string, boolean | null>(
+    data.map((d) => [`${d.area}|${d.dayId}`, d.value])
+  )
 
   return (
     <main className="p-6 space-y-6">
@@ -27,43 +52,52 @@ export default async function Home() {
           Source:{' '}
           <a
             className="underline"
-            href={data.source}
+            href={source}
             target="_blank"
             rel="noreferrer"
           >
-            {data.source}
+            {source}
           </a>
         </div>
       </div>
 
-      {/* {data.updatedText ? (
-        <p className="text-sm text-muted-foreground">{data.updatedText}</p>
+      {/* {updatedText ? (
+        <p className="text-sm text-muted-foreground">{updatedText}</p>
       ) : null} */}
 
       <div className="overflow-x-auto">
         <Table>
-          <TableCaption>{data.updatedText}</TableCaption>
+          <TableCaption>{updatedText}</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Area</TableHead>
 
-              {data.headers.map((h) => (
-                <TableHead key={h}>
-                  {format(h ?? new LocalDate(), 'MMM d')}
+              {days.map((d, idx) => (
+                <TableHead key={d.id ?? `day-${idx}`}>
+                  {d.date ? format(d.date, 'MMM d') : d.label}
                 </TableHead>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.rows.map((r) => (
-              <TableRow key={r.area}>
-                <TableCell>{r.area}</TableCell>
-                {data.headers.map((_, idx) => {
-                  const val = r.data[idx]?.value ?? 'n/a'
+            {areas.map((area) => (
+              <TableRow key={area}>
+                <TableCell>{area}</TableCell>
+
+                {days.map((day, idx) => {
+                  const val = byAreaDay.get(`${area}|${day.id}`) ?? null
+
                   const displayVal =
-                    val === true ? 'Yes' : val === false ? 'No' : 'n/a'
+                    val === true ? (
+                      <YupIcon />
+                    ) : val === false ? (
+                      <NopeIcon />
+                    ) : (
+                      'n/a'
+                    )
+
                   return (
-                    <TableCell key={`${r.area}-${idx}`}>{displayVal}</TableCell>
+                    <TableCell key={`${area}-${idx}`}>{displayVal}</TableCell>
                   )
                 })}
               </TableRow>
