@@ -1,16 +1,22 @@
-import {Geist, Geist_Mono} from 'next/font/google'
+import {Darumadrop_One, Inter} from 'next/font/google'
 import {Analytics} from '@vercel/analytics/next'
 import './globals.css'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const displayFont = Darumadrop_One({
+  variable: '--font-display',
+  subsets: ['latin'],
+  weight: ['400']
+})
+
+const sansFont = Inter({
+  variable: '--font-sans',
   subsets: ['latin']
 })
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin']
-})
+// const geistMono = Geist_Mono({
+//   variable: '--font-mono',
+//   subsets: ['latin']
+// })
 
 // export const metadata: Metadata = {
 //   title: 'Create Next App',
@@ -24,7 +30,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body
+        className={`${sansFont.variable} ${displayFont.variable} font-sans antialiased`}
+      >
         {children}
         <Analytics />
       </body>
