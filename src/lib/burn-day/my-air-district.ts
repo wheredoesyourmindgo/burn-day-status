@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio'
 import * as chrono from 'chrono-node'
-import {LOCAL_TIMEZONE, LocalDate} from './local-date'
+import {LOCAL_TIMEZONE, LocalDate} from '@/lib/local-date'
 import {isDate} from 'date-fns'
 
 export type Day = {
@@ -10,9 +10,19 @@ export type Day = {
 }
 
 export type Entry = {
-  area: string
+  area: string // canonical / source-of-truth
+  areaLabel: string // human-friendly display label
   dayId: string
   value: boolean | null
+}
+
+const AREA_LABELS: Record<string, string> = {
+  'Downtown and East Quincy': 'Quincy',
+  'Plumas County (Outside Quincy Area)': 'Plumas County',
+  'Sierra County': 'Sierra County',
+  'Town of Truckee': 'Truckee',
+  'Western Nevada County (West of Norden, Including Soda Springs)':
+    'Western Nevada County'
 }
 
 export async function getBurnDayStatus(): Promise<{
@@ -92,6 +102,8 @@ export async function getBurnDayStatus(): Promise<{
         .replace(/\s+/g, ' ') // Normalize spaces
         .trim()
 
+      const areaLabel = lookupAreaLabel(area) ?? area
+
       days.forEach((day, i) => {
         const raw = cells[i + 1]?.trim().toLowerCase()
 
@@ -103,6 +115,7 @@ export async function getBurnDayStatus(): Promise<{
 
         data.push({
           area,
+          areaLabel,
           dayId: day.id,
           value
         })
@@ -120,4 +133,16 @@ export async function getBurnDayStatus(): Promise<{
   const updatedText = updatedTextMatch?.[0]
 
   return {source, updatedText, days, data}
+}
+
+function lookupAreaLabel(area: string): string | undefined {
+  const areaLower = area.toLowerCase()
+
+  for (const [key, label] of Object.entries(AREA_LABELS)) {
+    if (key.toLowerCase() === areaLower) {
+      return label
+    }
+  }
+
+  return undefined
 }

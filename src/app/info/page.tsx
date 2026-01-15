@@ -49,6 +49,7 @@ export default async function Info() {
   const {data, source, updatedText, days} = await getBurnDayStatus()
   // console.log('Burn day data:', JSON.stringify(data, null, 2))
   // console.log('Days:', days)
+  // console.log(data)
 
   const areas = Array.from(new Set(data.map((d) => d.area))).sort()
 

@@ -1,12 +1,43 @@
-import {FlameKindling, Wind} from 'lucide-react'
+import {FlameKindling, Wind, Calendar} from 'lucide-react'
 import type {Metadata} from 'next'
 import {isSameDay} from 'date-fns'
 import {LocalDate} from '@/lib/local-date'
 import {getBurnDayStatus} from '@/lib/burn-day'
+import {format} from 'date-fns'
+import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
 
 export const metadata: Metadata = {
   title: 'Burn Day Status',
   description: 'Daily burn day status'
+}
+
+const CalendarToday = ({date}: {date: Date}) => {
+  const human = format(date, 'EEEE, MMMM do, yyyy')
+  const dayNum = format(date, 'd')
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className="group relative mb-6 inline-flex items-center justify-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+          aria-label={`Show date: ${human}`}
+        >
+          <Calendar
+            className="h-16 w-16 text-white/85 transition-all group-hover:text-white group-hover:scale-105 group-active:scale-95"
+            strokeWidth={1}
+          />
+          <span className="pointer-events-none absolute inset-0 flex items-center justify-center font-bold text-lg translate-y-2.5 text-white/85 transition-colors group-hover:text-white">
+            {dayNum}
+          </span>
+        </button>
+      </PopoverTrigger>
+
+      <PopoverContent className="w-auto px-3 py-2 mx-3 text-sm">
+        {human}
+      </PopoverContent>
+    </Popover>
+  )
 }
 
 export default async function Home() {
@@ -35,11 +66,19 @@ export default async function Home() {
         isBurnDay ? 'bg-red-600' : 'bg-sky-500'
       }`}
     >
-      {isBurnDay ? (
-        <FlameKindling className="w-32 h-32 mb-6" strokeWidth={1.25} />
-      ) : (
-        <Wind className="w-32 h-32 mb-6" strokeWidth={1.25} />
-      )}
+      <div className="mb-6">
+        {isBurnDay ? (
+          <FlameKindling
+            className="w-32 h-32 hover:scale-105 active:scale-90 transition-transform"
+            strokeWidth={1.25}
+          />
+        ) : (
+          <Wind
+            className="w-32 h-32 hover:scale-105 active:scale-90 transition-transform"
+            strokeWidth={1.25}
+          />
+        )}
+      </div>
 
       <h1 className="text-4xl font-bold mb-2">
         {isBurnDay ? (
@@ -51,13 +90,19 @@ export default async function Home() {
         )}
       </h1>
 
-      <p className="text-lg opacity-90">for Western Nevada County</p>
+      <p className="text-lg opacity-90">
+        for {todayEntry?.areaLabel ?? 'Western Nevada County'}
+      </p>
 
       {!isKnown ? (
         <p className="mt-4 text-sm opacity-80">
           Today’s status hasn’t been posted yet.
         </p>
       ) : null}
+
+      <div className="fixed bottom-4 left-4">
+        <CalendarToday date={(todayDay?.date ?? today) as Date} />
+      </div>
 
       <div className="fixed bottom-4 right-4 text-xs text-white/75">
         Source:{' '}
