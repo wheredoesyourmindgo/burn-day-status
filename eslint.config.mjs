@@ -3,6 +3,10 @@ import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
 import prettierRecommended from 'eslint-plugin-prettier/recommended'
 import tailwind from 'eslint-plugin-tailwindcss'
+import path from 'node:path'
+import {fileURLToPath} from 'node:url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const eslintConfig = defineConfig([
   // Override default ignores of eslint-config-next.
@@ -19,6 +23,12 @@ const eslintConfig = defineConfig([
   prettierRecommended,
   ...tailwind.configs['flat/recommended'],
   {
+    settings: {
+      // Suppress "Cannot resolve default tailwindcss config path. Please manually set the config option." during lint
+      tailwindcss: {
+        config: path.join(__dirname, './tailwind.config.mjs')
+      }
+    },
     rules: {
       camelcase: 'off',
       radix: 'warn',
