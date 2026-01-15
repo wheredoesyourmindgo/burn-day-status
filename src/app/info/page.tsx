@@ -16,7 +16,7 @@ const YupIcon = () => {
   return (
     <Check
       strokeWidth={2}
-      className="h-5 w-5 text-green-500 inline-block align-middle"
+      className="inline-block h-5 w-5 align-middle text-green-500"
       aria-label="Yes"
     />
   )
@@ -26,7 +26,7 @@ const NopeIcon = () => {
   return (
     <X
       strokeWidth={2}
-      className="h-5 w-5 text-red-500 inline-block align-middle"
+      className="inline-block h-5 w-5 align-middle text-red-500"
       aria-label="No"
     />
   )
@@ -58,11 +58,11 @@ export default async function Info() {
   )
 
   return (
-    <main className="p-6 space-y-6">
+    <main className="space-y-6 p-6">
       <div className="flex items-center gap-3">
         {/* <Button variant="outline">My Button</Button> */}
 
-        <div className="text-sm text-muted-foreground">
+        <div className="text-muted-foreground text-sm">
           Source:{' '}
           <a
             className="underline"
@@ -96,7 +96,7 @@ export default async function Info() {
           <TableBody>
             {areas.map((area) => (
               <TableRow key={area}>
-                <TableCell className="whitespace-normal break-words align-top">
+                <TableCell className="align-top break-words whitespace-normal">
                   {area}
                 </TableCell>
 

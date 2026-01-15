@@ -21,23 +21,23 @@ const CalendarToday = ({date}: {date: Date}) => {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="group relative inline-flex items-center justify-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+          className="group relative inline-flex items-center justify-center rounded-md focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
           aria-label={`Show date: ${human}`}
         >
           <Calendar
-            className="h-16 w-16 text-white/85 transition-transform transition-colors duration-150 ease-out group-hover:text-white group-hover:scale-105 group-active:scale-95"
+            className="h-16 w-16 text-white/85 transition-colors transition-transform duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95"
             strokeWidth={1}
           />
-          <span className="pointer-events-none absolute top-[24px] left-[31px] -translate-x-1/2 text-[12px] font-semibold tracking-wide uppercase text-white/85 transition-transform transition-colors duration-150 ease-out group-hover:text-white group-hover:scale-105 group-active:scale-95 font-display">
+          <span className="font-display pointer-events-none absolute top-[24px] left-[31px] -translate-x-1/2 text-[12px] font-semibold tracking-wide text-white/85 uppercase transition-colors transition-transform duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95">
             {monthAbbrev}
           </span>
-          <span className="pointer-events-none absolute inset-0 flex items-center justify-center font-extrabold text-md translate-y-[15px] text-white/85 transition-transform transition-colors duration-150 ease-out group-hover:text-white group-hover:scale-105 group-active:scale-95">
+          <span className="pointer-events-none absolute inset-0 flex translate-y-[15px] items-center justify-center text-base font-extrabold text-white/85 transition-colors transition-transform duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95">
             {dayNum}
           </span>
         </button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-auto px-3 py-2 mx-3 text-sm">
+      <PopoverContent className="mx-3 w-auto px-3 py-2 text-sm">
         {human}
       </PopoverContent>
     </Popover>
@@ -66,7 +66,7 @@ export default async function Home() {
 
   return (
     <main
-      className={`min-h-screen flex flex-col items-center justify-center text-white text-center px-6 ${
+      className={`flex min-h-screen flex-col items-center justify-center px-6 text-center text-white ${
         isBurnDay
           ? 'bg-gradient-to-b from-red-500 to-red-700'
           : 'bg-gradient-to-b from-sky-400 to-sky-600'
@@ -75,18 +75,18 @@ export default async function Home() {
       <div className="mb-5">
         {isBurnDay ? (
           <FlameKindling
-            className="w-32 h-32 hover:scale-105 active:scale-90 transition-transform"
+            className="h-32 w-32 transition-transform hover:scale-105 active:scale-90"
             strokeWidth={1.25}
           />
         ) : (
           <Wind
-            className="w-32 h-32 hover:scale-105 active:scale-90 transition-transform"
+            className="h-32 w-32 transition-transform hover:scale-105 active:scale-90"
             strokeWidth={1.25}
           />
         )}
       </div>
 
-      <h1 className="text-4xl mb-6 font-display">
+      <h1 className="font-display mb-6 text-4xl">
         {isBurnDay ? (
           "It's a Burn Day!"
         ) : (
@@ -97,7 +97,7 @@ export default async function Home() {
       </h1>
 
       {todayEntry?.areaLabel ? (
-        <p className="inline-flex items-center gap-2 text-md opacity-90">
+        <p className="inline-flex items-center gap-2 text-base opacity-90">
           <MapPinned className="h-5 w-5 shrink-0" />
           <span>{todayEntry?.areaLabel}</span>
         </p>
@@ -113,7 +113,7 @@ export default async function Home() {
         <CalendarToday date={(todayDay?.date ?? today) as Date} />
       </div>
 
-      <div className="fixed bottom-4 right-4 text-xs text-white/75">
+      <div className="fixed right-4 bottom-4 text-xs text-white/75">
         Source:{' '}
         <a
           className="underline underline-offset-3 hover:text-white"
