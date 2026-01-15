@@ -5,4 +5,6 @@ export const metadata: Metadata = {
   description: 'Daily burn day status by area'
 }
 
-export default async function Home() {}
+export default async function Home() {
+  return <main className="p-6 space-y-6"></main>
+}
