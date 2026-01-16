@@ -29,7 +29,7 @@ const CalendarToday = ({date}: {date: Date}) => {
             className="h-18 w-18 text-white/85 transition-colors transition-transform duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95"
             strokeWidth={1}
           />
-          <span className="font-display pointer-events-none absolute top-[28px] left-[35px] -translate-x-1/2 text-[13px] font-semibold tracking-wide !text-white/85 uppercase transition-colors transition-transform duration-150 ease-out group-hover:scale-105 group-hover:!text-white group-active:scale-95">
+          <span className="font-display pointer-events-none absolute top-[28px] left-[35px] -translate-x-1/2 text-[13px] font-semibold text-white/85 uppercase transition-colors transition-transform duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95">
             {monthAbbrev}
           </span>
           <span className="pointer-events-none absolute inset-0 flex translate-y-[17px] items-center justify-center text-lg font-extrabold text-white/85 transition-colors transition-transform duration-150 ease-out group-hover:translate-y-[18px] group-hover:scale-105 group-hover:text-white group-active:scale-95">
