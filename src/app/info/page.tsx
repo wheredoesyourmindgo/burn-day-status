@@ -51,10 +51,17 @@ export default async function Info() {
   // console.log('Days:', days)
   // console.log(data)
 
-  const areas = Array.from(new Set(data.map((d) => d.area))).sort()
+  const areas = Array.from(
+    new Map(
+      data.map(({areaId, areaLabel, areaSource}) => [
+        areaId,
+        {areaId, areaLabel, areaSource}
+      ])
+    ).values()
+  ).sort((a, b) => a.areaLabel.localeCompare(b.areaLabel))
 
   const byAreaDay = new Map<string, boolean | null>(
-    data.map((d) => [`${d.area}|${d.dayId}`, d.value])
+    data.map((d) => [`${d.areaId}|${d.dayId}`, d.value])
   )
 
   return (
@@ -95,13 +102,18 @@ export default async function Info() {
           </TableHeader>
           <TableBody>
             {areas.map((area) => (
-              <TableRow key={area}>
+              <TableRow key={area.areaId}>
                 <TableCell className="align-top break-words whitespace-normal">
-                  {area}
+                  <a
+                    className="underline-offset-2 hover:underline focus-visible:underline"
+                    href={`/?areaId=${area.areaId}`}
+                  >
+                    {area.areaSource}
+                  </a>
                 </TableCell>
 
                 {days.map((day, idx) => {
-                  const val = byAreaDay.get(`${area}|${day.id}`) ?? null
+                  const val = byAreaDay.get(`${area.areaId}|${day.id}`) ?? null
 
                   const displayVal =
                     val === true ? (
@@ -113,7 +125,9 @@ export default async function Info() {
                     )
 
                   return (
-                    <TableCell key={`${area}-${idx}`}>{displayVal}</TableCell>
+                    <TableCell key={`${area.areaId}-${idx}`}>
+                      {displayVal}
+                    </TableCell>
                   )
                 })}
               </TableRow>

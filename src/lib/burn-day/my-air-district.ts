@@ -2,6 +2,7 @@ import * as cheerio from 'cheerio'
 import * as chrono from 'chrono-node'
 import {LOCAL_TIMEZONE, LocalDate} from '@/lib/local-date'
 import {isDate} from 'date-fns'
+import stringHash from 'string-hash'
 
 export type Day = {
   id: string
@@ -10,7 +11,8 @@ export type Day = {
 }
 
 export type Entry = {
-  area: string // canonical / source-of-truth
+  areaId: string
+  areaSource: string // exact upstream / canonical text
   areaLabel: string // human-friendly display label
   dayId: string
   value: boolean | null
@@ -93,16 +95,22 @@ export async function getBurnDayStatus(): Promise<{
         .find('th,td')
         .toArray()
         .map((el) => $(el).text().replace(/\s+/g, ' ').trim())
-        .filter((c) => c.length > 0)
 
+      const areaCell = cells[0]?.trim()
+      if (!areaCell) return
       if (cells.length < 2) return
 
-      const area = cells[0]
+      const areaSource = areaCell
         .replace(/\(see map link below\)/i, '') // Remove parenthetical
         .replace(/\s+/g, ' ') // Normalize spaces
         .trim()
 
-      const areaLabel = lookupAreaLabel(area) ?? area
+      // Ignore non-row junk (e.g., repeated headers)
+      if (areaSource.toUpperCase() === 'AREA') return
+
+      const areaLabel = lookupAreaLabel(areaSource) ?? areaSource
+
+      const areaId = Math.abs(stringHash(areaSource)).toString(36) // Consistent stable ID (non-negative)
 
       days.forEach((day, i) => {
         const raw = cells[i + 1]?.trim().toLowerCase()
@@ -114,15 +122,13 @@ export async function getBurnDayStatus(): Promise<{
         if (!day.id) return
 
         data.push({
-          area,
+          areaId,
+          areaSource,
           areaLabel,
           dayId: day.id,
           value
         })
       })
-
-      // Ignore non-row junk (e.g., repeated headers)
-      if (area.toUpperCase() === 'AREA') return
     })
 
   // Pull updated text from the whole document (not the table)
