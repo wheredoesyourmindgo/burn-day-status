@@ -3,11 +3,21 @@
 import {MapPinned} from 'lucide-react'
 import {useRouter} from 'next/navigation'
 import {useCallback} from 'react'
-import {Select, SelectTrigger, SelectValue, SelectContent, SelectItem} from '@/components/ui/select'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+  SelectGroup,
+  SelectLabel
+} from '@/components/ui/select'
 
 type AreaOption = {
   areaId: string
   areaLabel: string
+  webId: string
+  webLabel: string
 }
 
 type Props = {
@@ -30,6 +40,17 @@ const AreaSelect = ({areas, value, onChange, basePath = '/', paramName = 'areaId
     [onChange, paramName, basePath, router]
   )
 
+  const areasByWeb = areas.reduce<Record<string, {webLabel: string; items: AreaOption[]}>>(
+    (acc, area) => {
+      if (!acc[area.webId]) {
+        acc[area.webId] = {webLabel: area.webLabel, items: []}
+      }
+      acc[area.webId].items.push(area)
+      return acc
+    },
+    {}
+  )
+
   return (
     <div className="inline-flex items-center gap-2 text-base opacity-90 transition-opacity duration-150 focus-within:opacity-100 hover:opacity-100">
       <MapPinned className="h-5 w-5 shrink-0" />
@@ -42,10 +63,15 @@ const AreaSelect = ({areas, value, onChange, basePath = '/', paramName = 'areaId
         </SelectTrigger>
 
         <SelectContent align="start">
-          {areas.map((area) => (
-            <SelectItem key={area.areaId} value={area.areaId}>
-              {area.areaLabel}
-            </SelectItem>
+          {Object.entries(areasByWeb).map(([webId, group]) => (
+            <SelectGroup key={webId}>
+              <SelectLabel>{group.webLabel}</SelectLabel>
+              {group.items.map((area) => (
+                <SelectItem key={area.areaId} value={area.areaId}>
+                  {area.areaLabel}
+                </SelectItem>
+              ))}
+            </SelectGroup>
           ))}
         </SelectContent>
       </Select>
