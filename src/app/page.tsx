@@ -1,10 +1,11 @@
-import {FlameKindling, Wind, Calendar, MapPinned} from 'lucide-react'
+import {FlameKindling, Wind, Calendar} from 'lucide-react'
 import type {Metadata} from 'next'
 import {isSameDay} from 'date-fns'
 import {LocalDate} from '@/lib/local-date'
 import {getBurnDayStatus} from '@/lib/burn-day'
 import {format} from 'date-fns'
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
+import AreaSelect from '@/components/AreaSelect'
 
 export const metadata: Metadata = {
   title: 'Burn Day Status',
@@ -44,11 +45,13 @@ const CalendarToday = ({date}: {date: Date}) => {
   )
 }
 
-export default async function Home({
-  searchParams
-}: {
-  searchParams?: Promise<{areaId?: string}>
-}) {
+type Props = {
+  searchParams?: Promise<{
+    areaId?: string
+  }>
+}
+
+export default async function Home({searchParams}: Props) {
   const {days, data, source} = await getBurnDayStatus()
 
   const resolvedSearchParams = await searchParams
@@ -74,6 +77,12 @@ export default async function Home({
   const burnValue = todayEntry?.value ?? null
   const isBurnDay = burnValue === true
   const isKnown = burnValue !== null
+
+  const areas = Array.from(
+    new Map(
+      data.map((d) => [d.areaId, {areaId: d.areaId, areaLabel: d.areaLabel}])
+    ).values()
+  ).sort((a, b) => a.areaLabel.localeCompare(b.areaLabel))
 
   return (
     <main
@@ -107,12 +116,7 @@ export default async function Home({
         )}
       </h1>
 
-      {todayEntry?.areaLabel ? (
-        <p className="inline-flex items-center gap-2 text-base opacity-90">
-          <MapPinned className="h-5 w-5 shrink-0" />
-          <span>{todayEntry?.areaLabel}</span>
-        </p>
-      ) : null}
+      <AreaSelect areas={areas} value={targetAreaId} />
 
       {!isKnown ? (
         <p className="mt-4 text-sm opacity-80">
