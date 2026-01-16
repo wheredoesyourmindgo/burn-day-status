@@ -62,7 +62,7 @@ const AreaSelect = ({areas, value, onChange, basePath = '/', paramName = 'areaId
           <SelectValue placeholder="Select area" />
         </SelectTrigger>
 
-        <SelectContent align="center">
+        <SelectContent position="popper">
           {Object.entries(areasByWeb).map(([webId, group]) => (
             <SelectGroup key={webId}>
               <SelectLabel>{group.webLabel}</SelectLabel>
