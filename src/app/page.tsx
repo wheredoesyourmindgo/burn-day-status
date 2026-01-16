@@ -75,7 +75,12 @@ export default async function Home({searchParams}: Props) {
   const isKnown = burnValue !== null
 
   const areas = Array.from(
-    new Map(data.map((d) => [d.areaId, {areaId: d.areaId, areaLabel: d.areaLabel}])).values()
+    new Map(
+      data.map(({areaId, areaLabel, webId, webLabel}) => [
+        areaId,
+        {areaId, areaLabel, webId, webLabel}
+      ])
+    ).values()
   ).sort((a, b) => a.areaLabel.localeCompare(b.areaLabel))
 
   return (

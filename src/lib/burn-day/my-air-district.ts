@@ -11,12 +11,18 @@ export type Day = {
 }
 
 export type Entry = {
+  webId: string
+  webSource: string // URL of the upstream source
+  webLabel: string // human-friendly display label for the source
   areaId: string
   areaSource: string // exact upstream / canonical text
   areaLabel: string // human-friendly display label
   dayId: string
   value: boolean | null
 }
+
+const WEB_LABEL = 'Northern Sierra Air Quality Management District'
+const WEB_SOURCE = 'https://www.myairdistrict.com/burn-day-status'
 
 const AREA_LABELS: Record<string, string> = {
   'Downtown and East Quincy': 'Quincy',
@@ -32,10 +38,8 @@ export async function getBurnDayStatus(): Promise<{
   days: Day[]
   data: Entry[]
 }> {
-  const source = 'https://www.myairdistrict.com/burn-day-status'
-
   // Cache it. This page updates daily, so hourly is plenty (tune as you like).
-  const res = await fetch(source, {
+  const res = await fetch(WEB_SOURCE, {
     headers: {'user-agent': 'burn-day-status/1.0'},
     next: {revalidate: 60 * 60}
   })
@@ -111,6 +115,11 @@ export async function getBurnDayStatus(): Promise<{
 
       const areaId = Math.abs(stringHash(areaSource)).toString(36) // Consistent stable ID (non-negative)
 
+      const webSource = WEB_SOURCE.replace(/\s+/g, ' ') // Normalize spaces
+        .trim()
+
+      const webId = Math.abs(stringHash(webSource)).toString(36) // Consistent stable ID (non-negative)
+
       days.forEach((day, i) => {
         const raw = cells[i + 1]?.trim().toLowerCase()
 
@@ -125,7 +134,10 @@ export async function getBurnDayStatus(): Promise<{
           areaSource,
           areaLabel,
           dayId: day.id,
-          value
+          value,
+          webId,
+          webSource,
+          webLabel: WEB_LABEL
         })
       })
     })
@@ -135,7 +147,7 @@ export async function getBurnDayStatus(): Promise<{
   const updatedTextMatch = bodyText.match(/This page is updated AFTER 3 p\.m\.[^\.]*daily/i)
   const updatedText = updatedTextMatch?.[0]
 
-  return {source, updatedText, days, data}
+  return {source: WEB_SOURCE, updatedText, days, data}
 }
 
 function lookupAreaLabel(area: string): string | undefined {
