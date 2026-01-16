@@ -25,14 +25,7 @@ export type LocalDateProps =
   | [year: number, month: number, date: number]
   | [year: number, month: number, date: number, hours: number]
   | [year: number, month: number, date: number, hours: number, minutes: number]
-  | [
-      year: number,
-      month: number,
-      date: number,
-      hours: number,
-      minutes: number,
-      seconds: number
-    ]
+  | [year: number, month: number, date: number, hours: number, minutes: number, seconds: number]
   | [
       year: number,
       month: number,
@@ -72,9 +65,7 @@ export default class LocalDate extends TZDate {
     } else if (typeof args[0] === 'string') {
       // Normalize date-only strings so they default to local midnight
       const str = args[0]
-      const normalized = /^\d{4}-\d{2}-\d{2}$/.test(str)
-        ? `${str}T00:00:00`
-        : str
+      const normalized = /^\d{4}-\d{2}-\d{2}$/.test(str) ? `${str}T00:00:00` : str
       // Handle case when the first argument is a date string
       super(normalized, LOCAL_TIMEZONE)
     } else if (args[0] instanceof Date) {
@@ -95,10 +86,7 @@ export default class LocalDate extends TZDate {
         milliseconds = 0 // Default to 0 if not provided
       ] = args as [number, number, number?, number?, number?, number?, number?]
 
-      super(
-        new Date(year, month, date, hours, minutes, seconds, milliseconds),
-        LOCAL_TIMEZONE
-      )
+      super(new Date(year, month, date, hours, minutes, seconds, milliseconds), LOCAL_TIMEZONE)
     }
   }
 }

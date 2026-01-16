@@ -24,11 +24,7 @@ const YupIcon = () => {
 
 const NopeIcon = () => {
   return (
-    <X
-      strokeWidth={2}
-      className="inline-block h-5 w-5 align-middle text-red-500"
-      aria-label="No"
-    />
+    <X strokeWidth={2} className="inline-block h-5 w-5 align-middle text-red-500" aria-label="No" />
   )
 }
 
@@ -53,10 +49,7 @@ export default async function Info() {
 
   const areas = Array.from(
     new Map(
-      data.map(({areaId, areaLabel, areaSource}) => [
-        areaId,
-        {areaId, areaLabel, areaSource}
-      ])
+      data.map(({areaId, areaLabel, areaSource}) => [areaId, {areaId, areaLabel, areaSource}])
     ).values()
   ).sort((a, b) => a.areaLabel.localeCompare(b.areaLabel))
 
@@ -71,12 +64,7 @@ export default async function Info() {
 
         <div className="text-muted-foreground text-sm">
           Source:{' '}
-          <a
-            className="underline"
-            href={source}
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a className="underline" href={source} target="_blank" rel="noreferrer">
             {source}
           </a>
         </div>
@@ -116,19 +104,9 @@ export default async function Info() {
                   const val = byAreaDay.get(`${area.areaId}|${day.id}`) ?? null
 
                   const displayVal =
-                    val === true ? (
-                      <YupIcon />
-                    ) : val === false ? (
-                      <NopeIcon />
-                    ) : (
-                      'n/a'
-                    )
+                    val === true ? <YupIcon /> : val === false ? <NopeIcon /> : 'n/a'
 
-                  return (
-                    <TableCell key={`${area.areaId}-${idx}`}>
-                      {displayVal}
-                    </TableCell>
-                  )
+                  return <TableCell key={`${area.areaId}-${idx}`}>{displayVal}</TableCell>
                 })}
               </TableRow>
             ))}

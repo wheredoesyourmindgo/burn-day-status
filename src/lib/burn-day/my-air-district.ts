@@ -23,8 +23,7 @@ const AREA_LABELS: Record<string, string> = {
   'Plumas County (Outside Quincy Area)': 'Plumas County',
   'Sierra County': 'Sierra County',
   'Town of Truckee': 'Truckee',
-  'Western Nevada County (West of Norden, Including Soda Springs)':
-    'Western Nevada County'
+  'Western Nevada County (West of Norden, Including Soda Springs)': 'Western Nevada County'
 }
 
 export async function getBurnDayStatus(): Promise<{
@@ -133,9 +132,7 @@ export async function getBurnDayStatus(): Promise<{
 
   // Pull updated text from the whole document (not the table)
   const bodyText = $('body').text().replace(/\s+/g, ' ')
-  const updatedTextMatch = bodyText.match(
-    /This page is updated AFTER 3 p\.m\.[^\.]*daily/i
-  )
+  const updatedTextMatch = bodyText.match(/This page is updated AFTER 3 p\.m\.[^\.]*daily/i)
   const updatedText = updatedTextMatch?.[0]
 
   return {source, updatedText, days, data}

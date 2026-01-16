@@ -1,7 +1,6 @@
 .next/
 .vercel/
 .yarn/
-.vscode/
 out/
 public/
 bundles/
