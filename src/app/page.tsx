@@ -25,13 +25,13 @@ const CalendarToday = ({date}: {date: Date}) => {
           aria-label={`Show date: ${human}`}
         >
           <Calendar
-            className="h-16 w-16 text-white/85 transition-colors transition-transform duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95"
+            className="h-18 w-18 text-white/85 transition-colors transition-transform duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95"
             strokeWidth={1}
           />
-          <span className="font-display pointer-events-none absolute top-[24px] left-[31px] -translate-x-1/2 text-[12px] font-semibold tracking-wide text-white/85 uppercase transition-colors transition-transform duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95">
+          <span className="font-display pointer-events-none absolute top-[28px] left-[35px] -translate-x-1/2 text-[13px] font-semibold tracking-wide text-white/85 uppercase transition-colors transition-transform duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95">
             {monthAbbrev}
           </span>
-          <span className="pointer-events-none absolute inset-0 flex translate-y-[15px] items-center justify-center text-base font-extrabold text-white/85 transition-colors transition-transform duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95">
+          <span className="pointer-events-none absolute inset-0 flex translate-y-[17px] items-center justify-center text-lg font-extrabold text-white/85 transition-colors transition-transform duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95">
             {dayNum}
           </span>
         </button>
