@@ -44,21 +44,32 @@ const CalendarToday = ({date}: {date: Date}) => {
   )
 }
 
-export default async function Home() {
+export default async function Home({
+  searchParams
+}: {
+  searchParams?: Promise<{areaId?: string}>
+}) {
   const {days, data, source} = await getBurnDayStatus()
 
-  const areaKey = 'western nevada county'
+  const resolvedSearchParams = await searchParams
+
+  const areaIdFromQuery = resolvedSearchParams?.areaId ?? null
+  const defaultEntry = data.find(
+    (e) => e.areaLabel?.toLowerCase() === 'western nevada county'
+  )
+  const defaultAreaId = defaultEntry?.areaId ?? null
   const today = new LocalDate()
 
-  // Find the Day object representing today (already parsed by your lib)
+  const targetAreaId = areaIdFromQuery ?? defaultAreaId ?? null
+
+  // Find the Day object representing today
   const todayDay = days.find((d) => d.date && isSameDay(d.date, today))
 
-  // Find the Entry for Western Nevada County for today’s column
+  // Find the Entry for the specified Area for today’s column
   const todayEntry =
-    todayDay &&
-    data.find(
-      (e) => e.area.toLowerCase().includes(areaKey) && e.dayId === todayDay.id
-    )
+    todayDay && targetAreaId
+      ? data.find((e) => e.areaId === targetAreaId && e.dayId === todayDay.id)
+      : undefined
 
   const burnValue = todayEntry?.value ?? null
   const isBurnDay = burnValue === true
