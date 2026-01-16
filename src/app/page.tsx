@@ -38,9 +38,7 @@ const CalendarToday = ({date}: {date: Date}) => {
         </button>
       </PopoverTrigger>
 
-      <PopoverContent className="mx-3 w-auto px-3 py-2 text-sm">
-        {human}
-      </PopoverContent>
+      <PopoverContent className="mx-3 w-auto px-3 py-2 text-sm">{human}</PopoverContent>
     </Popover>
   )
 }
@@ -57,9 +55,7 @@ export default async function Home({searchParams}: Props) {
   const resolvedSearchParams = await searchParams
 
   const areaIdFromQuery = resolvedSearchParams?.areaId ?? null
-  const defaultEntry = data.find(
-    (e) => e.areaLabel?.toLowerCase() === 'western nevada county'
-  )
+  const defaultEntry = data.find((e) => e.areaLabel?.toLowerCase() === 'western nevada county')
   const defaultAreaId = defaultEntry?.areaId ?? null
   const today = new LocalDate()
 
@@ -79,9 +75,7 @@ export default async function Home({searchParams}: Props) {
   const isKnown = burnValue !== null
 
   const areas = Array.from(
-    new Map(
-      data.map((d) => [d.areaId, {areaId: d.areaId, areaLabel: d.areaLabel}])
-    ).values()
+    new Map(data.map((d) => [d.areaId, {areaId: d.areaId, areaLabel: d.areaLabel}])).values()
   ).sort((a, b) => a.areaLabel.localeCompare(b.areaLabel))
 
   return (
@@ -119,9 +113,7 @@ export default async function Home({searchParams}: Props) {
       <AreaSelect areas={areas} value={targetAreaId} />
 
       {!isKnown ? (
-        <p className="mt-4 text-sm opacity-80">
-          Today’s status hasn’t been posted yet.
-        </p>
+        <p className="mt-4 text-sm opacity-80">Today’s status hasn’t been posted yet.</p>
       ) : null}
 
       <div className="fixed top-4 right-4 z-5">
