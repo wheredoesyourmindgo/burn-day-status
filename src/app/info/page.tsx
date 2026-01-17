@@ -63,7 +63,7 @@ export default async function Info() {
       new Map(
         data.map(({areaId, areaLabel, areaSource}) => [areaId, {areaId, areaLabel, areaSource}])
       ).values()
-    ).sort((a, b) => a.areaLabel.localeCompare(b.areaLabel))
+    ).sort((a, b) => a.areaSource.localeCompare(b.areaSource, undefined, {sensitivity: 'base'}))
 
   const buildByAreaDay = (data: typeof ncData) =>
     new Map<string, boolean | null>(data.map((d) => [`${d.areaId}|${d.dayId}`, d.value]))
@@ -79,7 +79,7 @@ export default async function Info() {
     : ncUpdatedText
 
   return (
-    <main className="min-h-dvh space-y-10 bg-gradient-to-b from-slate-200 to-slate-300 p-6 text-slate-900">
+    <main className="min-h-dvh space-y-10 bg-gradient-to-b from-slate-100 to-slate-200 p-6 text-slate-900">
       <header className="space-y-2 text-center">
         <h1 className="font-display text-3xl">Burn Day Information</h1>
         <p className="mx-auto max-w-2xl text-sm text-slate-600">
