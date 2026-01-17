@@ -1,4 +1,4 @@
-import {FlameKindling, Wind, Calendar, Scale} from 'lucide-react'
+import {FlameKindling, Wind, Calendar, Scale, Info} from 'lucide-react'
 import type {Metadata} from 'next'
 import {isSameDay, format} from 'date-fns'
 import {LocalDate, localTz} from '@/lib/local-date'
@@ -135,13 +135,39 @@ export default async function Home({searchParams}: Props) {
       </div>
 
       <div className="fixed right-4 bottom-4 left-4 flex items-end justify-between gap-6 text-xs">
-        <div className="flex max-w-xl min-w-0 flex-1 items-start gap-2 text-left text-white/60">
-          <Scale className="mt-0.5 hidden h-8 w-8 shrink-0 opacity-70 sm:block" strokeWidth={1.5} />
-          <p>
-            Information shown here is provided for convenience and may be delayed or subject to
-            change. Always verify current burn restrictions with your local air quality management
-            district before burning.
-          </p>
+        <div className="min-w-0 flex-1 text-left">
+          <div className="sm:hidden">
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  aria-label="Disclaimer and usage information"
+                  className="inline-flex items-center justify-center rounded-md p-1 text-white/70 transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
+                >
+                  <Info className="h-5 w-5" strokeWidth={1.75} />
+                </button>
+              </PopoverTrigger>
+
+              <PopoverContent
+                align="start"
+                side="top"
+                className="w-[min(22rem,calc(100vw-2rem))] text-xs leading-relaxed"
+              >
+                Information shown here is provided for convenience and may be delayed or subject to
+                change. Always verify current burn restrictions with your local air quality
+                management district before burning.
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          <div className="hidden max-w-xl items-start gap-2 text-white/60 sm:flex">
+            <Scale className="mt-0.5 h-8 w-8 shrink-0 opacity-70" strokeWidth={1.5} />
+            <p>
+              Information shown here is provided for convenience and may be delayed or subject to
+              change. Always verify current burn restrictions with your local air quality management
+              district before burning.
+            </p>
+          </div>
         </div>
 
         <div className="shrink-0 text-right text-white/75">
