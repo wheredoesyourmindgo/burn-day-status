@@ -1,9 +1,8 @@
 import {FlameKindling, Wind, Calendar} from 'lucide-react'
 import type {Metadata} from 'next'
-import {isSameDay} from 'date-fns'
-import {LocalDate} from '@/lib/local-date'
+import {isSameDay, format} from 'date-fns'
+import {LocalDate, localTz} from '@/lib/local-date'
 import {getBurnDayStatus} from '@/lib/burn-day'
-import {format} from 'date-fns'
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
 import AreaSelect from '@/components/AreaSelect'
 
@@ -13,9 +12,9 @@ export const metadata: Metadata = {
 }
 
 const CalendarToday = ({date}: {date: Date}) => {
-  const human = format(date, 'EEEE, MMMM do, yyyy')
-  const dayNum = format(date, 'd')
-  const monthAbbrev = format(date, 'MMM')
+  const human = format(date, 'EEEE, MMMM do, yyyy', {in: localTz})
+  const dayNum = format(date, 'd', {in: localTz})
+  const monthAbbrev = format(date, 'MMM', {in: localTz})
 
   return (
     <Popover>
@@ -62,7 +61,7 @@ export default async function Home({searchParams}: Props) {
   const targetAreaId = areaIdFromQuery ?? defaultAreaId ?? null
 
   // Find the Day object representing today
-  const todayDay = days.find((d) => d.date && isSameDay(d.date, today))
+  const todayDay = days.find((d) => d.date && isSameDay(d.date, today, {in: localTz}))
 
   // Find the Entry for the specified Area for today’s column
   const todayEntry =

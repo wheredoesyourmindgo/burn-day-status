@@ -11,6 +11,7 @@ import {format} from 'date-fns'
 import {getBurnDayStatus} from '@/lib/burn-day'
 import {Check, X} from 'lucide-react'
 import {type Metadata} from 'next'
+import {localTz} from '@/lib/local-date'
 
 const YupIcon = () => {
   return (
@@ -83,7 +84,7 @@ export default async function Info() {
 
               {days.map((d, idx) => (
                 <TableHead key={d.id ?? `day-${idx}`}>
-                  {d.date ? format(d.date, 'MMM d') : d.label}
+                  {d.date ? format(d.date, 'MMM d', {in: localTz}) : d.label}
                 </TableHead>
               ))}
             </TableRow>
