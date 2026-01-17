@@ -63,16 +63,18 @@ const AreaSelect = ({areas, value, onChange, basePath = '/', paramName = 'areaId
         </SelectTrigger>
 
         <SelectContent position="popper">
-          {Object.entries(areasByWeb).map(([webId, group]) => (
-            <SelectGroup key={webId}>
-              <SelectLabel>{group.webLabel}</SelectLabel>
-              {group.items.map((area) => (
-                <SelectItem key={area.areaId} value={area.areaId}>
-                  {area.areaLabel}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          ))}
+          {Object.entries(areasByWeb)
+            .sort(([, a], [, b]) => a.webLabel.localeCompare(b.webLabel))
+            .map(([webId, group]) => (
+              <SelectGroup key={webId}>
+                <SelectLabel>{group.webLabel}</SelectLabel>
+                {group.items.map((area) => (
+                  <SelectItem key={area.areaId} value={area.areaId}>
+                    {area.areaLabel}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            ))}
         </SelectContent>
       </Select>
     </div>
