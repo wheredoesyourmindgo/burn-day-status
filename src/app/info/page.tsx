@@ -8,7 +8,7 @@ import {
   TableRow
 } from '@/components/ui/table'
 import {format} from 'date-fns'
-import {getBurnDayStatus} from '@/lib/burn-day'
+import {getMyAirBurnDaysStatus} from '@/lib/burn-day'
 import {Check, X} from 'lucide-react'
 import {type Metadata} from 'next'
 import {localTz} from '@/lib/local-date'
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Info() {
-  const {data, source, updatedText, days} = await getBurnDayStatus()
+  const {data, source, updatedText, days} = await getMyAirBurnDaysStatus()
   // console.log('Burn day data:', JSON.stringify(data, null, 2))
   // console.log('Days:', days)
   // console.log(data)
