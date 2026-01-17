@@ -1,8 +1,8 @@
-import {FlameKindling, Wind, Calendar} from 'lucide-react'
+import {FlameKindling, Wind, Calendar, Scale} from 'lucide-react'
 import type {Metadata} from 'next'
 import {isSameDay, format} from 'date-fns'
 import {LocalDate, localTz} from '@/lib/local-date'
-import {getBurnDayStatus} from '@/lib/burn-day'
+import {getMyAirBurnDaysStatus, getPlacerCountyBurnDaysStatus} from '@/lib/burn-day'
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
 import AreaSelect from '@/components/AreaSelect'
 
@@ -49,24 +49,31 @@ type Props = {
 }
 
 export default async function Home({searchParams}: Props) {
-  const {days, data, source} = await getBurnDayStatus()
+  const {days: ncDays, data: ncData, source: ncSource} = await getMyAirBurnDaysStatus()
+  const {days: pcDays, data: pcData, source: pcSource} = await getPlacerCountyBurnDaysStatus()
 
   const resolvedSearchParams = await searchParams
 
   const areaIdFromQuery = resolvedSearchParams?.areaId ?? null
-  const defaultEntry = data.find((e) => e.areaLabel?.toLowerCase() === 'western nevada county')
+  const defaultEntry = ncData.find((e) => e.areaLabel?.toLowerCase() === 'western nevada county')
   const defaultAreaId = defaultEntry?.areaId ?? null
   const today = new LocalDate()
 
   const targetAreaId = areaIdFromQuery ?? defaultAreaId ?? null
 
   // Find the Day object representing today
-  const todayDay = days.find((d) => d.date && isSameDay(d.date, today, {in: localTz}))
+  const allDays = [...ncDays, ...pcDays]
+  const todayDay = allDays.find((d) => d.date && isSameDay(d.date, today, {in: localTz}))
 
   // Find the Entry for the specified Area for today’s column
+  const allData = [
+    ...ncData.map((e) => ({...e, sourceKey: 'nc' as const})),
+    ...pcData.map((e) => ({...e, sourceKey: 'pc' as const}))
+  ]
+
   const todayEntry =
     todayDay && targetAreaId
-      ? data.find((e) => e.areaId === targetAreaId && e.dayId === todayDay.id)
+      ? allData.find((e) => e.areaId === targetAreaId && e.dayId === todayDay.id)
       : undefined
 
   const burnValue = todayEntry?.value ?? null
@@ -75,12 +82,15 @@ export default async function Home({searchParams}: Props) {
 
   const areas = Array.from(
     new Map(
-      data.map(({areaId, areaLabel, webId, webLabel}) => [
-        areaId,
-        {areaId, areaLabel, webId, webLabel}
+      allData.map(({areaId, areaLabel, webId, webLabel, sourceKey}) => [
+        `${webId}:${areaId}`, // key only to avoid collisions
+        {areaId, areaLabel, webId, webLabel, sourceKey}
       ])
     ).values()
   ).sort((a, b) => a.areaLabel.localeCompare(b.areaLabel))
+
+  const selectedArea = targetAreaId ? areas.find((a) => a.areaId === targetAreaId) : undefined
+  const activeSource = selectedArea?.sourceKey === 'pc' ? pcSource : ncSource
 
   return (
     <main
@@ -124,16 +134,27 @@ export default async function Home({searchParams}: Props) {
         <CalendarToday date={(todayDay?.date ?? today) as Date} />
       </div>
 
-      <div className="fixed right-4 bottom-4 text-xs text-white/75">
-        Source:{' '}
-        <a
-          className="underline underline-offset-3 hover:text-white"
-          href={source}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {source}
-        </a>
+      <div className="fixed right-4 bottom-4 left-4 flex items-end justify-between gap-6 text-xs">
+        <div className="flex max-w-xl min-w-0 flex-1 items-start gap-2 text-left text-white/60">
+          <Scale className="mt-0.5 hidden h-8 w-8 shrink-0 opacity-70 sm:block" strokeWidth={1.5} />
+          <p>
+            Information shown here is provided for convenience and may be delayed or subject to
+            change. Always verify current burn restrictions with your local air quality management
+            district before burning.
+          </p>
+        </div>
+
+        <div className="shrink-0 text-right text-white/75">
+          Source:{' '}
+          <a
+            className="underline underline-offset-3 hover:text-white"
+            href={activeSource}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {activeSource}
+          </a>
+        </div>
       </div>
     </main>
   )

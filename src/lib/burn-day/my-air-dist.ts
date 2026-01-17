@@ -3,26 +3,11 @@ import * as chrono from 'chrono-node'
 import {LOCAL_TIMEZONE, LocalDate} from '@/lib/local-date'
 import {isDate} from 'date-fns'
 import stringHash from 'string-hash'
-
-export type Day = {
-  id: string
-  label: string
-  date: Date | null
-}
-
-export type Entry = {
-  webId: string
-  webSource: string // URL of the upstream source
-  webLabel: string // human-friendly display label for the source
-  areaId: string
-  areaSource: string // exact upstream / canonical text
-  areaLabel: string // human-friendly display label
-  dayId: string
-  value: boolean | null
-}
+import {type Day, type Entry} from '.'
 
 const WEB_LABEL = 'Northern Sierra Air Quality Management District'
 const WEB_SOURCE = 'https://www.myairdistrict.com/burn-day-status'
+const WEB_FETCH_URL = 'https://www.myairdistrict.com/burn-day-status'
 
 const AREA_LABELS: Record<string, string> = {
   'Downtown and East Quincy': 'Quincy',
@@ -39,7 +24,7 @@ export async function getBurnDayStatus(): Promise<{
   data: Entry[]
 }> {
   // Cache it. This page updates daily, so hourly is plenty (tune as you like).
-  const res = await fetch(WEB_SOURCE, {
+  const res = await fetch(WEB_FETCH_URL, {
     headers: {'user-agent': 'burn-day-status/1.0'},
     next: {revalidate: 60 * 60}
   })
@@ -124,8 +109,8 @@ export async function getBurnDayStatus(): Promise<{
         const raw = cells[i + 1]?.trim().toLowerCase()
 
         let value: boolean | null = null
-        if (raw === 'yes') value = true
-        else if (raw === 'no') value = false
+        if (raw.includes('yes')) value = true
+        else if (raw.includes('no')) value = false
 
         if (!day.id) return
 
