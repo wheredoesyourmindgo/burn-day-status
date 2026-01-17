@@ -144,7 +144,7 @@ export default async function Home({searchParams}: Props) {
                   aria-label="Disclaimer and usage information"
                   className="inline-flex items-center justify-center rounded-md p-1 text-white/70 transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
                 >
-                  <Info className="h-5 w-5" strokeWidth={1.75} />
+                  <Info className="h-6 w-6" strokeWidth={1.75} />
                 </button>
               </PopoverTrigger>
 
