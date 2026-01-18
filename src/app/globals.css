@@ -127,6 +127,8 @@
   }
 }
 
-.font-display {
-  font-family: var(--font-display);
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
 }
