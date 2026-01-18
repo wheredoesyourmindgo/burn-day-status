@@ -122,7 +122,7 @@ export async function getBurnDayStatus(): Promise<{
 
         if (!day.id) return
 
-        const id = stableEntryId(webId, areaId, day.id)
+        const id = stableEntryId(webSource, areaSource, day.id)
 
         data.push({
           id,

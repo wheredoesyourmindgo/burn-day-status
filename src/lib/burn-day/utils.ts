@@ -62,12 +62,12 @@ export function stableId(input: string): string {
  * Generates a stable identifier for a burn-day entry based on
  * its source, area, and day identifiers.
  *
- * @param webId - Identifier for the data source
- * @param areaId - Identifier for the burn area
+ * @param webSource - URL of the data source
+ * @param areaSource - Exact upstream / canonical text for the burn area
  * @param dayId - Identifier for the day/column
  */
-export function stableEntryId(webId: string, areaId: string, dayId: string): string {
-  return stableId(`${webId}|${areaId}|${dayId}`)
+export function stableEntryId(webSource: string, areaSource: string, dayId: string): string {
+  return stableId(`${webSource}|${areaSource}|${dayId}`)
 }
 
 /**
