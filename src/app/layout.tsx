@@ -10,7 +10,8 @@ const displayFont = Darumadrop_One({
 
 const sansFont = Inter({
   variable: '--font-sans',
-  subsets: ['latin']
+  subsets: ['latin'],
+  display: 'swap' // or 'optional' to reduce visible swapping
 })
 
 // const geistMono = Geist_Mono({
