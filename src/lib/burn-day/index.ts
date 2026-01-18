@@ -1,5 +1,5 @@
 import type {Day, Entry} from './types'
 
-export {getBurnDayStatus as getMyAirBurnDaysStatus} from './my-air-dist'
-export {getBurnDayStatus as getPlacerCountyBurnDaysStatus} from './pc-air-pollution-cntrl-dist'
+export {getBurnDayStatus as getMyAirBurnDaysStatus} from './ca-nc-air-dist'
+export {getBurnDayStatus as getPlacerCountyBurnDaysStatus} from './ca-pc-air-dist'
 export type {Day, Entry}
