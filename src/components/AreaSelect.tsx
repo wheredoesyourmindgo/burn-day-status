@@ -56,9 +56,11 @@ const AreaSelect = ({areas, value, onChange, basePath = '/', paramName = 'areaId
     return Object.entries(areasByWeb).sort(([, a], [, b]) => a.webLabel.localeCompare(b.webLabel))
   }, [areasByWeb])
 
+  const showIcon = selectedValue.length > 0
+
   return (
     <div className="inline-flex items-center gap-2 text-base opacity-90 transition-opacity duration-150 focus-within:opacity-100 hover:opacity-100">
-      <MapPinned className="h-5 w-5 shrink-0" />
+      {showIcon ? <MapPinned className="h-5 w-5 shrink-0" /> : null}
       <Select value={selectedValue} onValueChange={handleChange}>
         <SelectTrigger
           aria-label="Select a geographic area for burn day status"
