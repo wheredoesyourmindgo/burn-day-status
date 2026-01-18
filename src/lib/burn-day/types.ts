@@ -15,3 +15,10 @@ export type Entry = {
   dayId: string // Foreign key to Day.id
   value: boolean | null
 }
+
+export type BurnDayStatusResult = {
+  source: string
+  updatedText?: string
+  days: Day[]
+  data: Entry[]
+}

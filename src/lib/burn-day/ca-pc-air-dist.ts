@@ -1,12 +1,12 @@
-import * as cheerio from 'cheerio'
 import * as chrono from 'chrono-node'
 import {LOCAL_TIMEZONE, LocalDate} from '@/lib/local-date'
 import {isDate} from 'date-fns'
-import {type Day, type Entry} from './types'
+import type {BurnDayStatusResult, Day, Entry} from './types'
 import {
   fetchCheerio,
   findTableByFirstHeader,
   getHeaderCells,
+  lookupAreaLabel,
   parseYesNo,
   stableAreaId,
   stableEntryId,
@@ -28,12 +28,7 @@ const AREA_LABELS: Record<string, string> = {
   'Lake Tahoe (North Shore Placer County)': 'North Shore, Lake Tahoe'
 }
 
-export async function getBurnDayStatus(): Promise<{
-  source: string
-  updatedText?: string
-  days: Day[]
-  data: Entry[]
-}> {
+export async function getBurnDayStatus(): Promise<BurnDayStatusResult> {
   // Get Cheerio-loaded document with caching
   const $ = await fetchCheerio(WEB_FETCH_URL, {
     userAgent: 'burn-day-status/1.0',
@@ -99,7 +94,7 @@ export async function getBurnDayStatus(): Promise<{
       // Ignore non-row junk (e.g., repeated headers)
       if (areaSource.toUpperCase() === 'AREA') return
 
-      const areaLabel = lookupAreaLabel(areaSource) ?? areaSource
+      const areaLabel = lookupAreaLabel(areaSource, AREA_LABELS) ?? areaSource
 
       const webSource = WEB_SOURCE.replace(/\s+/g, ' ') // Normalize spaces
         .trim()
@@ -138,16 +133,4 @@ export async function getBurnDayStatus(): Promise<{
   // const updatedText = updatedTextMatch?.[0]
 
   return {source: WEB_SOURCE, updatedText: '', days, data}
-}
-
-function lookupAreaLabel(area: string): string | undefined {
-  const areaLower = area.toLowerCase()
-
-  for (const [key, label] of Object.entries(AREA_LABELS)) {
-    if (key.toLowerCase() === areaLower) {
-      return label
-    }
-  }
-
-  return undefined
 }

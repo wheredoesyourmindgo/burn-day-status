@@ -124,3 +124,26 @@ export async function fetchCheerio(
   const html = await res.text()
   return cheerio.load(html)
 }
+
+/**
+ * Looks up a human-friendly display label for a burn area based on
+ * an exact (case-insensitive) match against a provided labels map.
+ *
+ * This allows upstream area names to be normalized or improved for display
+ * purposes without mutating the original source value.
+ *
+ * @param area - Raw area name as provided by the upstream data source
+ * @param labels - Map of upstream area names to preferred display labels
+ * @returns A mapped display label if one exists, otherwise undefined
+ */
+export function lookupAreaLabel(area: string, labels: Record<string, string>): string | undefined {
+  const areaLower = area.toLowerCase()
+
+  for (const [key, label] of Object.entries(labels)) {
+    if (key.toLowerCase() === areaLower) {
+      return label
+    }
+  }
+
+  return undefined
+}
