@@ -8,7 +8,7 @@ import {
   TableRow
 } from '@/components/ui/table'
 import {format} from 'date-fns'
-import {getMyAirBurnDaysStatus, getPlacerCountyBurnDaysStatus} from '@/lib/burn-day'
+import {getCaNcBurnDaysStatus, getCaPcBurnDaysStatus} from '@/lib/burn-day'
 import {Check, X} from 'lucide-react'
 import {type Metadata} from 'next'
 import {localTz} from '@/lib/local-date'
@@ -45,38 +45,38 @@ export const metadata: Metadata = {
 
 export default async function Info() {
   const {
-    data: ncData,
-    source: ncSource,
-    updatedText: ncUpdatedText,
-    days: ncDays
-  } = await getMyAirBurnDaysStatus()
+    data: caNcData,
+    source: caNcSource,
+    updatedText: caNcUpdatedText,
+    days: caNcDays
+  } = await getCaNcBurnDaysStatus()
 
   const {
-    data: pcData,
-    source: pcSource,
-    updatedText: pcUpdatedText,
-    days: pcDays
-  } = await getPlacerCountyBurnDaysStatus()
+    data: caPcData,
+    source: caPcSource,
+    updatedText: caPcUpdatedText,
+    days: caPcDays
+  } = await getCaPcBurnDaysStatus()
 
-  const buildAreas = (data: typeof ncData) =>
+  const buildAreas = (data: typeof caNcData) =>
     Array.from(
       new Map(
         data.map(({areaId, areaLabel, areaSource}) => [areaId, {areaId, areaLabel, areaSource}])
       ).values()
     ).sort((a, b) => a.areaSource.localeCompare(b.areaSource, undefined, {sensitivity: 'base'}))
 
-  const buildByAreaDay = (data: typeof ncData) =>
+  const buildByAreaDay = (data: typeof caNcData) =>
     new Map<string, boolean | null>(data.map((d) => [`${d.areaId}|${d.dayId}`, d.value]))
 
-  const ncAreas = buildAreas(ncData)
-  const ncByAreaDay = buildByAreaDay(ncData)
+  const caNcAreas = buildAreas(caNcData)
+  const caNcByAreaDay = buildByAreaDay(caNcData)
 
-  const pcAreas = buildAreas(pcData)
-  const pcByAreaDay = buildByAreaDay(pcData)
+  const caPcAreas = buildAreas(caPcData)
+  const caPcByAreaDay = buildByAreaDay(caPcData)
 
-  const correctedNcUpdatedText = ncUpdatedText
-    ? ncUpdatedText.replace(/this page/i, 'this data source')
-    : ncUpdatedText
+  const correctedNcUpdatedText = caNcUpdatedText
+    ? caNcUpdatedText.replace(/this page/i, 'this data source')
+    : caNcUpdatedText
 
   return (
     <main className="min-h-dvh space-y-10 bg-gradient-to-b from-slate-100 to-slate-200 p-6 text-slate-900">
@@ -92,8 +92,8 @@ export default async function Info() {
           <h2 className="text-xl font-semibold">Northern Sierra Air Quality Management District</h2>
           <div className="text-sm text-slate-600">
             Source:{' '}
-            <a className="underline" href={ncSource} target="_blank" rel="noreferrer">
-              {ncSource}
+            <a className="underline" href={caNcSource} target="_blank" rel="noreferrer">
+              {caNcSource}
             </a>
           </div>
         </header>
@@ -103,7 +103,7 @@ export default async function Info() {
           <TableHeader>
             <TableRow>
               <TableHead>Area</TableHead>
-              {ncDays.map((d, idx) => (
+              {caNcDays.map((d, idx) => (
                 <TableHead key={d.id ?? `nc-day-${idx}`}>
                   {d.date ? format(d.date, 'MMM d', {in: localTz}) : d.label}
                 </TableHead>
@@ -111,7 +111,7 @@ export default async function Info() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {ncAreas.map((area) => (
+            {caNcAreas.map((area) => (
               <TableRow key={area.areaId}>
                 <TableCell className="align-top break-words whitespace-normal">
                   <a
@@ -122,8 +122,8 @@ export default async function Info() {
                   </a>
                 </TableCell>
 
-                {ncDays.map((day, idx) => {
-                  const val = ncByAreaDay.get(`${area.areaId}|${day.id}`) ?? null
+                {caNcDays.map((day, idx) => {
+                  const val = caNcByAreaDay.get(`${area.areaId}|${day.id}`) ?? null
                   const displayVal =
                     val === true ? <YupIcon /> : val === false ? <NopeIcon /> : 'n/a'
                   return <TableCell key={`${area.areaId}-${idx}`}>{displayVal}</TableCell>
@@ -139,18 +139,18 @@ export default async function Info() {
           <h2 className="text-xl font-semibold">Placer County Air Pollution Control District</h2>
           <div className="text-sm text-slate-600">
             Source:{' '}
-            <a className="underline" href={pcSource} target="_blank" rel="noreferrer">
-              {pcSource}
+            <a className="underline" href={caPcSource} target="_blank" rel="noreferrer">
+              {caPcSource}
             </a>
           </div>
         </header>
 
         <Table>
-          <TableCaption>{pcUpdatedText}</TableCaption>
+          <TableCaption>{caPcUpdatedText}</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Area</TableHead>
-              {pcDays.map((d, idx) => (
+              {caPcDays.map((d, idx) => (
                 <TableHead key={d.id ?? `pc-day-${idx}`}>
                   {d.date ? format(d.date, 'MMM d', {in: localTz}) : d.label}
                 </TableHead>
@@ -158,7 +158,7 @@ export default async function Info() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {pcAreas.map((area) => (
+            {caPcAreas.map((area) => (
               <TableRow key={area.areaId}>
                 <TableCell className="align-top break-words whitespace-normal">
                   <a
@@ -169,8 +169,8 @@ export default async function Info() {
                   </a>
                 </TableCell>
 
-                {pcDays.map((day, idx) => {
-                  const val = pcByAreaDay.get(`${area.areaId}|${day.id}`) ?? null
+                {caPcDays.map((day, idx) => {
+                  const val = caPcByAreaDay.get(`${area.areaId}|${day.id}`) ?? null
                   const displayVal =
                     val === true ? <YupIcon /> : val === false ? <NopeIcon /> : 'n/a'
                   return <TableCell key={`${area.areaId}-${idx}`}>{displayVal}</TableCell>

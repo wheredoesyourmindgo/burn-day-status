@@ -71,6 +71,17 @@ export function stableEntryId(webId: string, areaId: string, dayId: string): str
 }
 
 /**
+ * Generates a stable identifier for a burn-day area based on
+ * its source and area identifiers.
+ *
+ * @param webId - Identifier for the data source
+ * @param areaId - Identifier for the burn area
+ */
+export function stableAreaId(webId: string, areaId: string): string {
+  return stableId(`${webId}|${areaId}`)
+}
+
+/**
  * Parses a textual cell value into a boolean burn-day status.
  *
  * @param raw - Raw cell text (e.g. "Yes", "No", "", undefined)

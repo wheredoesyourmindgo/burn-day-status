@@ -2,7 +2,7 @@ import {FlameKindling, Wind, Calendar, Scale, Info} from 'lucide-react'
 import type {Metadata} from 'next'
 import {isSameDay, format} from 'date-fns'
 import {LocalDate, localTz} from '@/lib/local-date'
-import {getMyAirBurnDaysStatus, getPlacerCountyBurnDaysStatus} from '@/lib/burn-day'
+import {getCaNcBurnDaysStatus, getCaPcBurnDaysStatus} from '@/lib/burn-day'
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
 import AreaSelect from '@/components/AreaSelect'
 
@@ -49,26 +49,36 @@ type Props = {
 }
 
 export default async function Home({searchParams}: Props) {
-  const {days: ncDays, data: ncData, source: ncSource} = await getMyAirBurnDaysStatus()
-  const {days: pcDays, data: pcData, source: pcSource} = await getPlacerCountyBurnDaysStatus()
+  const {days: caNcDays, data: caNcData, source: caNcSource} = await getCaNcBurnDaysStatus()
+  const {days: caPcDays, data: caPcData, source: caPcSource} = await getCaPcBurnDaysStatus()
 
   const resolvedSearchParams = await searchParams
 
   const areaIdFromQuery = resolvedSearchParams?.areaId ?? null
-  const defaultEntry = ncData.find((e) => e.areaLabel?.toLowerCase() === 'western nevada county')
+  const defaultEntry = caNcData.find((e) => e.areaLabel?.toLowerCase() === 'western nevada county')
   const defaultAreaId = defaultEntry?.areaId ?? null
   const today = new LocalDate()
 
   const targetAreaId = areaIdFromQuery ?? defaultAreaId ?? null
 
+  const sources = [
+    {key: 'nc' as const, sourceUrl: caNcSource},
+    {key: 'pc' as const, sourceUrl: caPcSource}
+  ]
+
+  const sourcesByKey = Object.fromEntries(sources.map((s) => [s.key, s])) as Record<
+    (typeof sources)[number]['key'],
+    (typeof sources)[number]
+  >
+
   // Find the Day object representing today
-  const allDays = [...ncDays, ...pcDays]
+  const allDays = [...caNcDays, ...caPcDays]
   const todayDay = allDays.find((d) => d.date && isSameDay(d.date, today, {in: localTz}))
 
   // Find the Entry for the specified Area for today’s column
   const allData = [
-    ...ncData.map((e) => ({...e, sourceKey: 'nc' as const})),
-    ...pcData.map((e) => ({...e, sourceKey: 'pc' as const}))
+    ...caNcData.map((e) => ({...e, sourceKey: 'nc' as const})),
+    ...caPcData.map((e) => ({...e, sourceKey: 'pc' as const}))
   ]
 
   const todayEntry =
@@ -90,7 +100,8 @@ export default async function Home({searchParams}: Props) {
   ).sort((a, b) => a.areaLabel.localeCompare(b.areaLabel))
 
   const selectedArea = targetAreaId ? areas.find((a) => a.areaId === targetAreaId) : undefined
-  const activeSource = selectedArea?.sourceKey === 'pc' ? pcSource : ncSource
+
+  const activeSource = selectedArea ? (sourcesByKey[selectedArea.sourceKey]?.sourceUrl ?? '') : ''
 
   return (
     <main
