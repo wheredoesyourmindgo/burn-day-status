@@ -12,6 +12,7 @@ import {
   SelectGroup,
   SelectLabel
 } from '@/components/ui/select'
+import {cn} from '@/lib/utils'
 
 type AreaOption = {
   areaId: string
@@ -57,7 +58,12 @@ const AreaSelect = ({areas, value, onChange, basePath = '/', paramName = 'areaId
   }, [areasByWeb])
 
   return (
-    <div className="inline-flex items-center gap-2 text-base opacity-90 transition-opacity duration-150 focus-within:opacity-100 hover:opacity-100">
+    <div
+      className={cn(
+        'inline-flex items-center gap-2 text-base transition-opacity duration-150',
+        selectedValue ? 'opacity-90 focus-within:opacity-100 hover:opacity-100' : 'opacity-0'
+      )}
+    >
       <MapPinned className="h-5 w-5 shrink-0" />
       <Select value={selectedValue} onValueChange={handleChange}>
         <SelectTrigger
