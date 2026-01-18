@@ -3,7 +3,14 @@ import * as chrono from 'chrono-node'
 import {LOCAL_TIMEZONE, LocalDate} from '@/lib/local-date'
 import {isDate} from 'date-fns'
 import {type Day, type Entry} from './types'
-import {findTableByFirstHeader, getHeaderCells, parseYesNo, stableEntryId, stableId} from './utils'
+import {
+  findTableByFirstHeader,
+  getHeaderCells,
+  parseYesNo,
+  stableAreaId,
+  stableEntryId,
+  stableId
+} from './utils'
 
 const WEB_LABEL = 'Placer County Air Pollution Control District'
 const WEB_SOURCE = 'https://placerair.org/1671/Burn-Days'
@@ -100,12 +107,12 @@ export async function getBurnDayStatus(): Promise<{
 
       const areaLabel = lookupAreaLabel(areaSource) ?? areaSource
 
-      const areaId = stableId(areaSource) // Consistent stable ID (non-negative)
-
       const webSource = WEB_SOURCE.replace(/\s+/g, ' ') // Normalize spaces
         .trim()
 
-      const webId = stableId(webSource) // Consistent stable ID (non-negative)
+      const webId = stableId(webSource)
+
+      const areaId = stableAreaId(webSource, areaSource)
 
       days.forEach((day, i) => {
         const colIndex = headerCells.findIndex((_, idx) => !omitIndexes.has(idx) && idx > 0) + i
