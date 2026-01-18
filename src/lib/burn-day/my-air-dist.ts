@@ -2,8 +2,8 @@ import * as cheerio from 'cheerio'
 import * as chrono from 'chrono-node'
 import {LOCAL_TIMEZONE, LocalDate} from '@/lib/local-date'
 import {isDate} from 'date-fns'
-import stringHash from 'string-hash'
-import {type Day, type Entry} from '.'
+import {type Day, type Entry} from './types'
+import {findTableByFirstHeader, getHeaderCells, parseYesNo, stableEntryId, stableId} from './utils'
 
 const WEB_LABEL = 'Northern Sierra Air Quality Management District'
 const WEB_SOURCE = 'https://www.myairdistrict.com/burn-day-status'
@@ -40,23 +40,15 @@ export async function getBurnDayStatus(): Promise<{
   // The page renders the burn-day info as an HTML table; extracting from text loses structure
   // and makes headers/rows hard to align.
 
-  // Find the table that contains the "AREA" header.
-  const tables = $('table').toArray()
-  const table = tables
-    .map((t) => $(t))
-    .find((t) => t.find('th,td').first().text().trim().toUpperCase() === 'AREA')
+  // Find the table that contains the "Area" header.
+  const table = findTableByFirstHeader($, 'Area')
 
   if (!table) {
-    throw new Error('Could not find burn-day table (missing AREA header cell)')
+    throw new Error('Could not find burn-day table (missing Area header cell)')
   }
 
   // Header cells: use the first row (th or td)
-  const headerCells = table
-    .find('tr')
-    .first()
-    .find('th,td')
-    .toArray()
-    .map((el) => $(el).text().replace(/\s+/g, ' ').trim())
+  const headerCells = getHeaderCells(table, $)
 
   const days: Day[] = headerCells
     .slice(1)
@@ -98,23 +90,23 @@ export async function getBurnDayStatus(): Promise<{
 
       const areaLabel = lookupAreaLabel(areaSource) ?? areaSource
 
-      const areaId = Math.abs(stringHash(areaSource)).toString(36) // Consistent stable ID (non-negative)
+      const areaId = stableId(areaSource) // Consistent stable ID (non-negative)
 
       const webSource = WEB_SOURCE.replace(/\s+/g, ' ') // Normalize spaces
         .trim()
 
-      const webId = Math.abs(stringHash(webSource)).toString(36) // Consistent stable ID (non-negative)
+      const webId = stableId(webSource) // Consistent stable ID (non-negative)
 
       days.forEach((day, i) => {
-        const raw = cells[i + 1]?.trim().toLowerCase()
-
-        let value: boolean | null = null
-        if (raw.includes('yes')) value = true
-        else if (raw.includes('no')) value = false
+        const raw = cells[i + 1]
+        const value = parseYesNo(raw)
 
         if (!day.id) return
 
+        const id = stableEntryId(webId, areaId, day.id)
+
         data.push({
+          id,
           areaId,
           areaSource,
           areaLabel,

@@ -2,8 +2,8 @@ import * as cheerio from 'cheerio'
 import * as chrono from 'chrono-node'
 import {LOCAL_TIMEZONE, LocalDate} from '@/lib/local-date'
 import {isDate} from 'date-fns'
-import stringHash from 'string-hash'
-import {type Day, type Entry} from '.'
+import {type Day, type Entry} from './types'
+import {findTableByFirstHeader, getHeaderCells, parseYesNo, stableEntryId, stableId} from './utils'
 
 const WEB_LABEL = 'Placer County Air Pollution Control District'
 const WEB_SOURCE = 'https://placerair.org/1671/Burn-Days'
@@ -44,22 +44,14 @@ export async function getBurnDayStatus(): Promise<{
   // and makes headers/rows hard to align.
 
   // Find the table that contains the "Area" header.
-  const tables = $('table').toArray()
-  const table = tables
-    .map((t) => $(t))
-    .find((t) => t.find('th,td').first().text().trim().toUpperCase() === 'AREA')
+  const table = findTableByFirstHeader($, 'Area')
 
   if (!table) {
     throw new Error('Could not find burn-day table (missing Area header cell)')
   }
 
   // Header cells: use the first row (th or td)
-  const headerCells = table
-    .find('tr')
-    .first()
-    .find('th,td')
-    .toArray()
-    .map((el) => $(el).text().replace(/\s+/g, ' ').trim())
+  const headerCells = getHeaderCells(table, $)
 
   const omitIndexes = new Set(
     headerCells
@@ -108,24 +100,25 @@ export async function getBurnDayStatus(): Promise<{
 
       const areaLabel = lookupAreaLabel(areaSource) ?? areaSource
 
-      const areaId = Math.abs(stringHash(areaSource)).toString(36) // Consistent stable ID (non-negative)
+      const areaId = stableId(areaSource) // Consistent stable ID (non-negative)
 
       const webSource = WEB_SOURCE.replace(/\s+/g, ' ') // Normalize spaces
         .trim()
 
-      const webId = Math.abs(stringHash(webSource)).toString(36) // Consistent stable ID (non-negative)
+      const webId = stableId(webSource) // Consistent stable ID (non-negative)
 
       days.forEach((day, i) => {
         const colIndex = headerCells.findIndex((_, idx) => !omitIndexes.has(idx) && idx > 0) + i
-        const raw = cells[colIndex]?.trim().toLowerCase()
 
-        let value: boolean | null = null
-        if (raw.includes('yes')) value = true
-        else if (raw.includes('no')) value = false
+        const raw = cells[colIndex]
+        const value = parseYesNo(raw)
 
         if (!day.id) return
 
+        const id = stableEntryId(webId, areaId, day.id)
+
         data.push({
+          id,
           areaId,
           areaSource,
           areaLabel,
@@ -139,11 +132,11 @@ export async function getBurnDayStatus(): Promise<{
     })
 
   // Pull updated text from the whole document (not the table)
-  const bodyText = $('body').text().replace(/\s+/g, ' ')
-  const updatedTextMatch = bodyText.match(/This page is updated AFTER 3 p\.m\.[^\.]*daily/i)
-  const updatedText = updatedTextMatch?.[0]
+  // const bodyText = $('body').text().replace(/\s+/g, ' ')
+  // const updatedTextMatch = bodyText.match(//i)
+  // const updatedText = updatedTextMatch?.[0]
 
-  return {source: WEB_SOURCE, updatedText, days, data}
+  return {source: WEB_SOURCE, updatedText: '', days, data}
 }
 
 function lookupAreaLabel(area: string): string | undefined {
