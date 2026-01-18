@@ -1,5 +1,12 @@
 const SMALL_WORDS = new Set(['and', 'or', 'the', 'of', 'in', 'on', 'at', 'for', 'to', 'with'])
 
+/**
+ * Normalizes common am/pm variants (e.g. "AM", "a.m.", "pm") to
+ * a consistent lowercase dotted form ("a.m." / "p.m.").
+ *
+ * @param word - A single word token from the input string
+ * @returns Normalized meridiem string, or null if not a meridiem token
+ */
 function normalizeMeridiem(word: string): string | null {
   const lower = word.toLowerCase().replace(/\./g, '')
   if (lower === 'am') return 'a.m.'
@@ -7,6 +14,16 @@ function normalizeMeridiem(word: string): string | null {
   return null
 }
 
+/**
+ * Converts a string to title case, capitalizing significant words
+ * while keeping common short words (e.g. "and", "of", "the") lowercase,
+ * except when they appear at the start.
+ *
+ * Also normalizes am/pm tokens and preserves numeric values.
+ *
+ * @param input - Input string to transform
+ * @returns Title-cased string suitable for headings or labels
+ */
 export default function toTitleCase(input = ''): string {
   return input
     .trim()
@@ -32,6 +49,15 @@ export default function toTitleCase(input = ''): string {
     .join(' ')
 }
 
+/**
+ * Converts a string to sentence case: capitalizes the first character
+ * and lowercases the remainder of the sentence.
+ *
+ * Also normalizes am/pm tokens to a consistent dotted form.
+ *
+ * @param input - Input string to transform
+ * @returns Sentence-cased string suitable for prose or descriptions
+ */
 export function toSentenceCase(input = ''): string {
   const trimmed = input.trim()
   if (!trimmed) return ''
