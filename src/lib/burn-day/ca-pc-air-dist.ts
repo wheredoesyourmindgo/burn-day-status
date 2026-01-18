@@ -4,6 +4,7 @@ import {LOCAL_TIMEZONE, LocalDate} from '@/lib/local-date'
 import {isDate} from 'date-fns'
 import {type Day, type Entry} from './types'
 import {
+  fetchCheerio,
   findTableByFirstHeader,
   getHeaderCells,
   parseYesNo,
@@ -33,18 +34,11 @@ export async function getBurnDayStatus(): Promise<{
   days: Day[]
   data: Entry[]
 }> {
-  // Cache it. This page updates daily, so hourly is plenty (tune as you like).
-  const res = await fetch(WEB_FETCH_URL, {
-    headers: {'user-agent': 'burn-day-status/1.0'},
-    next: {revalidate: 60 * 60}
+  // Get Cheerio-loaded document with caching
+  const $ = await fetchCheerio(WEB_FETCH_URL, {
+    userAgent: 'burn-day-status/1.0',
+    revalidateSeconds: 60 * 60
   })
-
-  if (!res.ok) {
-    throw new Error(`Upstream fetch failed: ${res.status} ${res.statusText}`)
-  }
-
-  const html = await res.text()
-  const $ = cheerio.load(html)
 
   // Parse the actual table structure instead of relying on body text.
   // The page renders the burn-day info as an HTML table; extracting from text loses structure

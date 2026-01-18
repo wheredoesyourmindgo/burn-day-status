@@ -94,3 +94,33 @@ export function parseYesNo(raw?: string): boolean | null {
   if (s.includes('no')) return false
   return null
 }
+
+/**
+ * Fetches an HTML document and loads it into Cheerio.
+ *
+ * Designed for Next.js server environments where `fetch` supports caching via
+ * the `next.revalidate` option.
+ *
+ * @param url - URL to fetch
+ * @param opts - Fetch options
+ * @param opts.revalidateSeconds - Cache revalidation window in seconds
+ * @param opts.userAgent - Optional user-agent header value
+ * @returns Cheerio root instance for the fetched HTML
+ * @throws If the upstream fetch fails (non-2xx response)
+ */
+export async function fetchCheerio(
+  url: string,
+  opts: {revalidateSeconds: number; userAgent?: string}
+): Promise<cheerio.CheerioAPI> {
+  const res = await fetch(url, {
+    headers: opts.userAgent ? {'user-agent': opts.userAgent} : undefined,
+    next: {revalidate: opts.revalidateSeconds}
+  })
+
+  if (!res.ok) {
+    throw new Error(`Upstream fetch failed: ${res.status} ${res.statusText}`)
+  }
+
+  const html = await res.text()
+  return cheerio.load(html)
+}
