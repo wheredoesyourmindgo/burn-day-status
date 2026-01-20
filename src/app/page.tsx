@@ -125,7 +125,7 @@ export default async function Home({searchParams}: Props) {
         )}
       </div>
 
-      <h1 className="font-display mb-6 text-4xl">
+      <h1 className="mb-6 text-4xl">
         {isBurnDay ? (
           "It's a Burn Day!"
         ) : (
