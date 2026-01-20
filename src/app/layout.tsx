@@ -30,8 +30,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={`${sansFont.variable} ${displayFont.variable} font-sans antialiased`}>
+    <html lang="en" className={`${sansFont.variable} ${displayFont.variable}`}>
+      <body className="font-sans antialiased">
         {children}
         <Analytics />
       </body>
