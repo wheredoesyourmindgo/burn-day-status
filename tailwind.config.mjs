@@ -8,7 +8,14 @@ can be removed.
 const tailwindConfig = {
   content: ['./src/**/*.{js,ts,jsx,tsx}', './app/**/*.{js,ts,jsx,tsx}'],
   theme: {
-    extend: {}
+    extend: {
+      fontFamily: {
+        // Tailwind/shadcn defaults:
+        sans: ['var(--font-body)'],
+        // Semantic aliases:
+        display: ['var(--font-display)']
+      }
+    }
   },
   plugins: []
 }
