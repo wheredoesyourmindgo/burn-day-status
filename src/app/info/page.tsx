@@ -81,7 +81,7 @@ export default async function Info() {
   return (
     <main className="min-h-dvh space-y-10 bg-gradient-to-b from-slate-100 to-slate-200 p-6 text-slate-900">
       <header className="space-y-2 text-center">
-        <h1 className="font-display text-3xl">Burn Day Information</h1>
+        <h1 className="text-3xl">Burn Day Information</h1>
         <p className="mx-auto max-w-2xl text-sm text-slate-600">
           Detailed burn day status by area and date, provided by regional air quality districts.
         </p>

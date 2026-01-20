@@ -25,7 +25,7 @@ export default function Error({
         />
       </div>
 
-      <h1 className="font-display mb-4 text-4xl">Something went wrong</h1>
+      <h1 className="mb-4 text-4xl">Something went wrong</h1>
 
       <p className="mb-8 max-w-md text-sm opacity-90">
         An unexpected error occurred while loading this page. Check back later, or try again.
