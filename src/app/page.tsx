@@ -113,15 +113,9 @@ export default async function Home({searchParams}: Props) {
     >
       <div className="mb-5">
         {isBurnDay ? (
-          <FlameKindling
-            className="h-32 w-32 transition-transform hover:scale-105 active:scale-90"
-            strokeWidth={1.25}
-          />
+          <FlameKindling className="h-32 w-32" strokeWidth={1.25} />
         ) : (
-          <Wind
-            className="h-32 w-32 transition-transform hover:scale-105 active:scale-90"
-            strokeWidth={1.25}
-          />
+          <Wind className="h-32 w-32" strokeWidth={1.25} />
         )}
       </div>
 
