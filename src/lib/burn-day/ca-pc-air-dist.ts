@@ -7,7 +7,6 @@ import {
   findTableByFirstHeader,
   getHeaderCells,
   lookupAreaLabel,
-  parseYesNo,
   stableAreaId,
   stableEntryId,
   stableId
@@ -107,7 +106,7 @@ export async function getBurnDayStatus(): Promise<BurnDayStatusResult> {
         const colIndex = headerCells.findIndex((_, idx) => !omitIndexes.has(idx) && idx > 0) + i
 
         const raw = cells[colIndex]
-        const value = parseYesNo(raw)
+        const value = parseBurnDayStatus(raw)
 
         if (!day.id) return
 
@@ -133,4 +132,12 @@ export async function getBurnDayStatus(): Promise<BurnDayStatusResult> {
   // const updatedText = updatedTextMatch?.[0]
 
   return {source: WEB_SOURCE, updatedText: '', days, data}
+}
+
+function parseBurnDayStatus(raw?: string): boolean | null {
+  const s = raw?.trim().toLowerCase()
+  if (!s) return null
+  if (s.includes('no burn day')) return false
+  if (s.includes('burn day')) return true
+  return null
 }
