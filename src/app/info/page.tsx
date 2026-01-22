@@ -87,7 +87,7 @@ export default async function Info() {
         </p>
       </header>
 
-      <section className="space-y-4 pt-8">
+      <section className="space-y-4 pt-4 sm:pt-8">
         <header className="space-y-1">
           <h2 className="text-xl font-semibold">Northern Sierra Air Quality Management District</h2>
           <div className="text-sm text-slate-600">
@@ -134,7 +134,7 @@ export default async function Info() {
         </Table>
       </section>
 
-      <section className="space-y-4 pt-8">
+      <section className="space-y-4 pt-4 sm:pt-8">
         <header className="space-y-1">
           <h2 className="text-xl font-semibold">Placer County Air Pollution Control District</h2>
           <div className="text-sm text-slate-600">
