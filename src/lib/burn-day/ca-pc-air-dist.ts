@@ -7,11 +7,13 @@ import {
   findTableByFirstHeader,
   getHeaderCells,
   lookupAreaLabel,
+  normalizeText,
   stableAreaId,
   stableEntryId,
   stableId
 } from './utils'
 
+const WEB_KEY = 'ca-pc-air-dist' // Stable key for IDs
 const WEB_LABEL = 'Placer County Air Pollution Control District'
 const WEB_SOURCE = 'https://placerair.org/1671/Burn-Days'
 const WEB_FETCH_URL = 'https://itwebservices.placer.ca.gov/apcdbdi/home/iframe'
@@ -55,6 +57,11 @@ export async function getBurnDayStatus(): Promise<BurnDayStatusResult> {
       .map(({idx}) => idx)
   )
 
+  const includedColIndexes = headerCells
+    .map((_, idx) => idx)
+    .slice(1) // skip Area column index 0
+    .filter((idx) => !omitIndexes.has(idx))
+
   const days: Day[] = headerCells
     .map((label, idx) => ({label, idx}))
     .slice(1)
@@ -72,6 +79,8 @@ export async function getBurnDayStatus(): Promise<BurnDayStatusResult> {
 
   const data: Entry[] = []
 
+  const webId = stableId(WEB_KEY)
+
   // Data rows: all rows after the header row
   table
     .find('tr')
@@ -80,37 +89,28 @@ export async function getBurnDayStatus(): Promise<BurnDayStatusResult> {
       const cells = $(tr)
         .find('th,td')
         .toArray()
-        .map((el) => $(el).text().replace(/\s+/g, ' ').trim())
+        .map((el) => normalizeText($(el).text()))
 
       const areaCell = cells[0]?.trim()
       if (!areaCell) return
       if (cells.length < 2) return
 
       const areaSource = areaCell
-        .replace(/\s+/g, ' ') // Normalize spaces
-        .trim()
 
       // Ignore non-row junk (e.g., repeated headers)
       if (areaSource.toUpperCase() === 'AREA') return
 
       const areaLabel = lookupAreaLabel(areaSource, AREA_LABELS) ?? areaSource
 
-      const webSource = WEB_SOURCE.replace(/\s+/g, ' ') // Normalize spaces
-        .trim()
-
-      const webId = stableId(webSource)
-
-      const areaId = stableAreaId(webSource, areaSource)
+      const areaId = stableAreaId(WEB_KEY, areaSource)
 
       days.forEach((day, i) => {
-        const colIndex = headerCells.findIndex((_, idx) => !omitIndexes.has(idx) && idx > 0) + i
+        const colIndex = includedColIndexes[i]
+        const raw = colIndex != null ? cells[colIndex] : undefined
 
-        const raw = cells[colIndex]
         const value = parseBurnDayStatus(raw)
 
-        if (!day.id) return
-
-        const id = stableEntryId(webSource, areaSource, day.id)
+        const id = stableEntryId(WEB_KEY, areaSource, day.id)
 
         data.push({
           id,
@@ -120,7 +120,7 @@ export async function getBurnDayStatus(): Promise<BurnDayStatusResult> {
           dayId: day.id,
           value,
           webId,
-          webSource,
+          webSource: WEB_SOURCE,
           webLabel: WEB_LABEL
         })
       })
