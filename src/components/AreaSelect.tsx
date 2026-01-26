@@ -64,7 +64,7 @@ const AreaSelect = ({areas, value, onChange, basePath = '/', paramName = 'areaId
       <Select value={selectedValue} onValueChange={handleChange}>
         <SelectTrigger
           aria-label="Select a geographic area for burn day status"
-          className="h-auto gap-1 border-0 bg-transparent p-0 text-base underline-offset-2 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 [&>svg]:transition-opacity [&>svg:not([class*='text-'])]:text-current [&>svg:not([class*='text-'])]:opacity-70 hover:[&>svg:not([class*='text-'])]:opacity-100"
+          className="h-auto gap-1 border-0 bg-transparent p-0 text-base underline-offset-2 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 [&_svg]:!text-current [&_svg]:opacity-70 [&_svg]:transition-opacity hover:[&_svg]:opacity-100"
         >
           <SelectValue placeholder="Select area" />
         </SelectTrigger>
