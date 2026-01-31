@@ -4750,7 +4750,7 @@ __metadata:
     radix-ui: "npm:^1.4.3"
     react: "npm:19.2.4"
     react-dom: "npm:19.2.4"
-    shadcn: "npm:^3.8.0"
+    shadcn: "npm:^3.8.1"
     string-hash: "npm:^1.1.3"
     tailwind-merge: "npm:^3.4.0"
     tailwindcss: "npm:^4.1.18"
@@ -10040,9 +10040,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shadcn@npm:^3.8.0":
-  version: 3.8.0
-  resolution: "shadcn@npm:3.8.0"
+"shadcn@npm:^3.8.1":
+  version: 3.8.1
+  resolution: "shadcn@npm:3.8.1"
   dependencies:
     "@antfu/ni": "npm:^25.0.0"
     "@babel/core": "npm:^7.28.0"
@@ -10080,7 +10080,7 @@ __metadata:
     zod-to-json-schema: "npm:^3.24.6"
   bin:
     shadcn: dist/index.js
-  checksum: 10c0/b74bf50e97526638b8734e333adc19995603a999fe095201116aa7652ce49a355c4930ff9e0b40ae1546d27519bf302ee55f9614fc986938ee27bb44deec9143
+  checksum: 10c0/d8ac2ac1c11b2302a217bbdedff4c2df44baccee769a5f750440d144fa0bab3484d3bb5ab26afa429610778405a8a8b38f5574cea16a6b558a36eb103faed004
   languageName: node
   linkType: hard
 
