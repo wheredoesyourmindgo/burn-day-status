@@ -31,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${sansFont.variable} ${displayFont.variable}`}>
-      <body className="font-sans antialiased">
+      <body>
         {children}
         <Analytics />
       </body>
