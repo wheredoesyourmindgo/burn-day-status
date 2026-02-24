@@ -8,7 +8,7 @@ import {
   TableRow
 } from '@/components/ui/table'
 import {format} from 'date-fns'
-import {getCaNcBurnDaysStatus, getCaPcBurnDaysStatus} from '@/lib/burn-day'
+import {getCaNcBurnDaysStatus} from '@/lib/burn-day'
 import {Check, X} from 'lucide-react'
 import {type Metadata} from 'next'
 import {localTz} from '@/lib/local-date'
@@ -51,12 +51,12 @@ export default async function Info() {
     days: caNcDays
   } = await getCaNcBurnDaysStatus()
 
-  const {
-    data: caPcData,
-    source: caPcSource,
-    updatedText: caPcUpdatedText,
-    days: caPcDays
-  } = await getCaPcBurnDaysStatus()
+  // const {
+  //   data: caPcData,
+  //   source: caPcSource,
+  //   updatedText: caPcUpdatedText,
+  //   days: caPcDays
+  // } = await getCaPcBurnDaysStatus()
 
   const buildAreas = (data: typeof caNcData) =>
     Array.from(
@@ -71,8 +71,8 @@ export default async function Info() {
   const caNcAreas = buildAreas(caNcData)
   const caNcByAreaDay = buildByAreaDay(caNcData)
 
-  const caPcAreas = buildAreas(caPcData)
-  const caPcByAreaDay = buildByAreaDay(caPcData)
+  // const caPcAreas = buildAreas(caPcData)
+  // const caPcByAreaDay = buildByAreaDay(caPcData)
 
   const correctedNcUpdatedText = caNcUpdatedText
     ? caNcUpdatedText.replace(/this page/i, 'this data source')
@@ -134,7 +134,7 @@ export default async function Info() {
         </Table>
       </section>
 
-      <section className="space-y-4 pt-4 sm:pt-8">
+      {/* <section className="space-y-4 pt-4 sm:pt-8">
         <header className="space-y-1">
           <h2 className="text-xl font-semibold">Placer County Air Pollution Control District</h2>
           <div className="text-sm text-slate-600">
@@ -179,7 +179,7 @@ export default async function Info() {
             ))}
           </TableBody>
         </Table>
-      </section>
+      </section> */}
     </main>
   )
 }

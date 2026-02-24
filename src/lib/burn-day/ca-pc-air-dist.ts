@@ -33,7 +33,7 @@ export async function getBurnDayStatus(): Promise<BurnDayStatusResult> {
   // Get Cheerio-loaded document with caching
   const $ = await fetchCheerio(WEB_FETCH_URL, {
     userAgent: 'burn-day-status/1.0',
-    revalidateSeconds: 60 * 60
+    revalidateSeconds: 60 * 10
   })
 
   // Parse the actual table structure instead of relying on body text.
