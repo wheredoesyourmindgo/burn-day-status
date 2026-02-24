@@ -84,7 +84,8 @@ const eslintConfig = defineConfig([
             'bg-sidebar-accent',
             'text-sidebar-accent-foreground',
             'border-sidebar-border',
-            'ring-sidebar-ring'
+            'ring-sidebar-ring',
+            'font-display'
           ]
         }
       ]

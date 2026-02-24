@@ -2,7 +2,7 @@ import {FlameKindling, Wind, Calendar, Scale, Info} from 'lucide-react'
 import type {Metadata} from 'next'
 import {isSameDay, format} from 'date-fns'
 import {LocalDate, localTz} from '@/lib/local-date'
-import {getCaNcBurnDaysStatus, getCaPcBurnDaysStatus} from '@/lib/burn-day'
+import {getCaNcBurnDaysStatus} from '@/lib/burn-day'
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
 import AreaSelect from '@/components/AreaSelect'
 
@@ -50,7 +50,7 @@ type Props = {
 
 export default async function Home({searchParams}: Props) {
   const {days: caNcDays, data: caNcData, source: caNcSource} = await getCaNcBurnDaysStatus()
-  const {days: caPcDays, data: caPcData, source: caPcSource} = await getCaPcBurnDaysStatus()
+  // const {days: caPcDays, data: caPcData, source: caPcSource} = await getCaPcBurnDaysStatus()
 
   const resolvedSearchParams = await searchParams
 
@@ -62,8 +62,8 @@ export default async function Home({searchParams}: Props) {
   const targetAreaId = areaIdFromQuery ?? defaultAreaId ?? null
 
   const sources = [
-    {key: 'nc' as const, sourceUrl: caNcSource},
-    {key: 'pc' as const, sourceUrl: caPcSource}
+    {key: 'nc' as const, sourceUrl: caNcSource}
+    // {key: 'pc' as const, sourceUrl: caPcSource}
   ]
 
   const sourcesByKey = Object.fromEntries(sources.map((s) => [s.key, s])) as Record<
@@ -72,13 +72,14 @@ export default async function Home({searchParams}: Props) {
   >
 
   // Find the Day object representing today
-  const allDays = [...caNcDays, ...caPcDays]
+  // const allDays = [...caNcDays, ...caPcDays]
+  const allDays = [...caNcDays]
   const todayDay = allDays.find((d) => d.date && isSameDay(d.date, today, {in: localTz}))
 
   // Find the Entry for the specified Area for today’s column
   const allData = [
-    ...caNcData.map((e) => ({...e, sourceKey: 'nc' as const})),
-    ...caPcData.map((e) => ({...e, sourceKey: 'pc' as const}))
+    ...caNcData.map((e) => ({...e, sourceKey: 'nc' as const}))
+    // ...caPcData.map((e) => ({...e, sourceKey: 'pc' as const}))
   ]
 
   const todayEntry =
