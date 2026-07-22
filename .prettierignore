@@ -7,3 +7,7 @@ bundles/
 node_modules/
 coverage/
 dist/
+
+# shadcn/ui vendor code
+src/components/ui/
+src/lib/utils.ts

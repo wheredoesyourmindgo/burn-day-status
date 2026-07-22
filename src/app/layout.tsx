@@ -1,5 +1,6 @@
 import {Darumadrop_One, Inter} from 'next/font/google'
 import {Analytics} from '@vercel/analytics/next'
+import {TooltipProvider} from '@/components/ui/tooltip'
 import './globals.css'
 
 const displayFont = Darumadrop_One({
@@ -32,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${sansFont.variable} ${displayFont.variable}`}>
       <body>
-        {children}
+        <TooltipProvider>{children}</TooltipProvider>
         <Analytics />
       </body>
     </html>
