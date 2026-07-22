@@ -61,15 +61,18 @@ const AreaSelect = ({areas, value, onChange, basePath = '/', paramName = 'areaId
   return (
     <div className="inline-flex items-center gap-2 text-base opacity-90 transition-opacity duration-150 focus-within:opacity-100 hover:opacity-100">
       {showIcon ? <MapPinned className="h-5 w-5 shrink-0" /> : null}
-      <Select value={selectedValue} onValueChange={handleChange}>
+      <Select
+        value={selectedValue}
+        onValueChange={(areaId) => areaId !== null && handleChange(areaId)}
+      >
         <SelectTrigger
           aria-label="Select a geographic area for burn day status"
-          className="h-auto gap-1 border-0 bg-transparent p-0 text-base underline-offset-2 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 [&_svg]:!text-current [&_svg]:opacity-70 [&_svg]:transition-opacity hover:[&_svg]:opacity-100"
+          className="h-auto gap-1 border-0 bg-transparent p-0 text-base underline-offset-2 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 [&_svg]:text-current! [&_svg]:opacity-70 [&_svg]:transition-opacity hover:[&_svg]:opacity-100"
         >
           <SelectValue placeholder="Select area" />
         </SelectTrigger>
 
-        <SelectContent position="popper">
+        <SelectContent alignItemWithTrigger={false}>
           {sortedGroups.map(([webId, group]) => (
             <SelectGroup key={webId}>
               <SelectLabel>{group.webLabel}</SelectLabel>

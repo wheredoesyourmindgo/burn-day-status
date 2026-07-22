@@ -18,24 +18,26 @@ const CalendarToday = ({date}: {date: Date}) => {
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          className="group relative inline-flex items-center justify-center rounded-md focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
-          aria-label={`Show date: ${human}`}
-        >
-          <Calendar
-            className="h-18 w-18 text-white/85 transition-colors transition-transform duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95"
-            strokeWidth={1}
-          />
-          <span className="font-display pointer-events-none absolute top-[28px] left-[35px] -translate-x-1/2 text-[13px] font-semibold tracking-wide text-white/85 uppercase transition-colors transition-transform duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95">
-            {dayOfWeek}
-          </span>
-          <span className="pointer-events-none absolute inset-0 flex translate-y-[17px] items-center justify-center text-lg font-extrabold text-white/85 transition-colors transition-transform duration-150 ease-out group-hover:translate-y-[18px] group-hover:scale-105 group-hover:text-white group-active:scale-95">
-            {dayNum}
-          </span>
-        </button>
-      </PopoverTrigger>
+      <PopoverTrigger
+        render={
+          <button
+            type="button"
+            className="group relative inline-flex items-center justify-center rounded-md focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
+            aria-label={`Show date: ${human}`}
+          >
+            <Calendar
+              className="h-18 w-18 text-white/85 transition-[color,transform] duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95"
+              strokeWidth={1}
+            />
+            <span className="font-display pointer-events-none absolute top-7 left-[35px] -translate-x-1/2 text-[13px] font-semibold tracking-wide text-white/85 uppercase transition-[color,transform] duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95">
+              {dayOfWeek}
+            </span>
+            <span className="pointer-events-none absolute inset-0 flex translate-y-[17px] items-center justify-center text-lg font-extrabold text-white/85 transition-[color,transform] duration-150 ease-out group-hover:translate-y-[18px] group-hover:scale-105 group-hover:text-white group-active:scale-95">
+              {dayNum}
+            </span>
+          </button>
+        }
+      />
 
       <PopoverContent className="mx-3 w-auto px-3 py-2 text-sm">{human}</PopoverContent>
     </Popover>
@@ -144,15 +146,17 @@ export default async function Home({searchParams}: Props) {
         <div className="min-w-0 flex-1 text-left">
           <div className="sm:hidden">
             <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  aria-label="Disclaimer and usage information"
-                  className="inline-flex items-center justify-center rounded-md p-1 text-white/70 transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
-                >
-                  <Info className="h-6 w-6" strokeWidth={1.75} />
-                </button>
-              </PopoverTrigger>
+              <PopoverTrigger
+                render={
+                  <button
+                    type="button"
+                    aria-label="Disclaimer and usage information"
+                    className="inline-flex items-center justify-center rounded-md p-1 text-white/70 transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
+                  >
+                    <Info className="h-6 w-6" strokeWidth={1.75} />
+                  </button>
+                }
+              />
 
               <PopoverContent
                 align="start"
