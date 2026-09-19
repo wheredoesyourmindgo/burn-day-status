@@ -110,8 +110,8 @@ export default async function Home({searchParams}: Props) {
     <main
       className={`flex h-dvh flex-col items-center justify-center overflow-hidden overscroll-none px-6 text-center text-white ${
         isBurnDay
-          ? 'bg-gradient-to-b from-orange-500 to-orange-700'
-          : 'bg-gradient-to-b from-sky-400 to-sky-600'
+          ? 'bg-linear-to-b from-orange-500 to-orange-700'
+          : 'bg-linear-to-b from-sky-400 to-sky-600'
       }`}
     >
       <div className="mb-5">
