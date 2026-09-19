@@ -2,13 +2,13 @@
 
 # dependencies
 /node_modules
-/.pnp
+# this project standardizes on npm -- package-lock.json is the only lockfile
+yarn.lock
+pnpm-lock.yaml
+bun.lock
+bun.lockb
+.yarn/
 .pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
 
 # testing
 /coverage
