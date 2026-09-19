@@ -6,13 +6,24 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "preinstall": "npx --yes --loglevel=error only-allow npm",
     "dev": "vc dev",
+    "vc": "vc",
+    "vc:prod": "vc --prod",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "lint:fix": "eslint --fix",
     "format": "prettier --config .prettierrc --write './src/**/*.{ts,tsx,css}'",
     "type-check": "tsc --noEmit -p .",
-    "type-check:watch": "npm run type-check -- --watch"
+    "type-check:watch": "npm run type-check -- --watch",
+    "clean": "rimraf node_modules .next .vercel/cache",
+    "reinstall": "npm run clean && npm ci",
+    "audit": "npm audit --omit=dev --audit-level=high",
+    "verify": "npm run type-check && npm run lint && npm run build && npm run audit",
+    "deps:check": "npm outdated || true",
+    "deps:upgrade": "npx --yes npm-check-updates --interactive --format group --target minor",
+    "deps:upgrade:major": "npx --yes npm-check-updates --interactive --format group --target latest"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -45,10 +56,10 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-tailwindcss": "^4.2.0",
     "prettier": "^3.9.6",
+    "rimraf": "^6.1.3",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4.3.3",
     "typescript": "5.9.3",
-    "vercel": "^56.5.0"
-  },
-  "packageManager": "yarn@4.17.1"
+    "vercel": "^59.23.2"
+  }
 }
