@@ -11,24 +11,80 @@ import stringHash from 'string-hash'
  */
 export const normalizeText = (s: string) => s.replace(/\s+/g, ' ').trim()
 
+/** Escapes a string for safe embedding inside a RegExp. */
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
 /**
- * Finds the first <table> whose first header cell (th or td)
- * matches the provided header text after normalization.
+ * Reduces a label to a loose comparison key: lowercased, parentheticals
+ * removed, and all non-alphanumeric runs collapsed to single spaces.
+ *
+ * Lets upstream punctuation/qualifier churn (e.g. "Plumas County (Outside
+ * Quincy Area)" vs "Plumas County (including the Quincy area...)") still
+ * compare equal on the part that actually identifies the row.
+ */
+const looseKey = (s: string) =>
+  normalizeText(s)
+    .toLowerCase()
+    .replace(/\([^)]*\)/g, ' ')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+
+/**
+ * Returns true when a table cell reads as the expected header.
+ *
+ * Deliberately permissive: upstream frequently appends qualifiers to the
+ * header cell (e.g. "AREA (NOTE: NEW ZONES BELOW)"), which an exact-equality
+ * check would reject.
+ */
+function isHeaderMatch(cellText: string, headerText: string): boolean {
+  const cell = normalizeText(cellText).toUpperCase()
+  const target = normalizeText(headerText).toUpperCase()
+
+  if (!cell || !target) return false
+  if (cell === target) return true
+
+  // "AREA" should match "AREA (NOTE: ...)" but not "AREAS SERVED BY ..."
+  return new RegExp(`^${escapeRegExp(target)}\\b`).test(cell)
+}
+
+/**
+ * Returns true when a table looks like a data grid we can parse:
+ * at least a header row plus one data row, and at least two columns.
+ */
+function isPlausibleDataTable($table: cheerio.Cheerio<Element>, $: cheerio.CheerioAPI): boolean {
+  const rows = $table.find('tr').toArray()
+  if (rows.length < 2) return false
+
+  const firstRowCellCount = $(rows[0]).find('th,td').length
+  return firstRowCellCount >= 2
+}
+
+/**
+ * Finds the <table> whose first header cell (th or td) matches the provided
+ * header text.
+ *
+ * Matching is intentionally loose (see {@link isHeaderMatch}). If no table
+ * matches by header, falls back to the largest plausible data table on the
+ * page so that a cosmetic upstream header edit doesn't break extraction
+ * outright.
  *
  * @param $ - Cheerio root instance
  * @param headerText - Expected first header cell text (e.g. "AREA")
- * @returns A Cheerio-wrapped table element, or undefined if not found
+ * @returns A Cheerio-wrapped table element, or undefined if none is usable
  */
 export function findTableByFirstHeader($: cheerio.CheerioAPI, headerText: string) {
-  const target = normalizeText(headerText).toUpperCase()
-  const tables = $('table').toArray()
-
-  return tables
+  const tables = $('table')
+    .toArray()
     .map((t) => $(t))
-    .find((t) => {
-      const firstHeaderText = normalizeText(t.find('th,td').first().text()).toUpperCase()
-      return firstHeaderText === target
-    })
+
+  const byHeader = tables.find((t) => isHeaderMatch(t.find('th,td').first().text(), headerText))
+
+  if (byHeader) return byHeader
+
+  // Fallback: the biggest table that structurally looks like a data grid.
+  return tables
+    .filter((t) => isPlausibleDataTable(t, $))
+    .sort((a, b) => b.find('tr').length - a.find('tr').length)[0]
 }
 
 /**
@@ -84,14 +140,17 @@ export function stableAreaId(webSource: string, areaSource: string): string {
 /**
  * Parses a textual cell value into a boolean burn-day status.
  *
+ * Matches on whole words so that prose cells ("Not a burn day", "Nothing
+ * posted") can't be mistaken for a bare "no" via substring matching.
+ *
  * @param raw - Raw cell text (e.g. "Yes", "No", "", undefined)
  * @returns true for "yes", false for "no", or null if indeterminate
  */
 export function parseYesNo(raw?: string): boolean | null {
-  const s = raw?.trim().toLowerCase()
+  const s = normalizeText(raw ?? '').toLowerCase()
   if (!s) return null
-  if (s.includes('yes')) return true
-  if (s.includes('no')) return false
+  if (/\byes\b/.test(s)) return true
+  if (/\bno\b/.test(s)) return false
   return null
 }
 
@@ -126,23 +185,37 @@ export async function fetchCheerio(
 }
 
 /**
- * Looks up a human-friendly display label for a burn area based on
- * an exact (case-insensitive) match against a provided labels map.
+ * Looks up a human-friendly display label for a burn area.
  *
- * This allows upstream area names to be normalized or improved for display
- * purposes without mutating the original source value.
+ * Tries an exact (case-insensitive) match first, then falls back to a loose
+ * comparison that ignores parentheticals and punctuation, so that upstream
+ * rewording of a zone name doesn't silently drop its friendly label.
  *
  * @param area - Raw area name as provided by the upstream data source
  * @param labels - Map of upstream area names to preferred display labels
  * @returns A mapped display label if one exists, otherwise undefined
  */
 export function lookupAreaLabel(area: string, labels: Record<string, string>): string | undefined {
-  const areaLower = area.toLowerCase()
+  const areaLower = normalizeText(area).toLowerCase()
+  const entries = Object.entries(labels)
 
-  for (const [key, label] of Object.entries(labels)) {
-    if (key.toLowerCase() === areaLower) {
-      return label
-    }
+  for (const [key, label] of entries) {
+    if (normalizeText(key).toLowerCase() === areaLower) return label
+  }
+
+  const areaKey = looseKey(area)
+  if (!areaKey) return undefined
+
+  for (const [key, label] of entries) {
+    if (looseKey(key) === areaKey) return label
+  }
+
+  // Last resort: one name is a leading subset of the other, e.g.
+  // "Plumas County" vs "Plumas County Outside Quincy Area".
+  for (const [key, label] of entries) {
+    const k = looseKey(key)
+    if (!k) continue
+    if (areaKey.startsWith(`${k} `) || k.startsWith(`${areaKey} `)) return label
   }
 
   return undefined

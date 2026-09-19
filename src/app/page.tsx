@@ -1,4 +1,4 @@
-import {FlameKindling, Wind, Calendar, Scale, Info} from 'lucide-react'
+import {FlameKindling, Wind, Calendar, Scale, Info, CloudOff} from 'lucide-react'
 import type {Metadata} from 'next'
 import {isSameDay, format} from 'date-fns'
 import {LocalDate, localTz} from '@/lib/local-date'
@@ -52,7 +52,6 @@ type Props = {
 
 export default async function Home({searchParams}: Props) {
   const {days: caNcDays, data: caNcData, source: caNcSource} = await getCaNcBurnDaysStatus()
-  // const {days: caPcDays, data: caPcData, source: caPcSource} = await getCaPcBurnDaysStatus()
 
   const resolvedSearchParams = await searchParams
 
@@ -63,31 +62,37 @@ export default async function Home({searchParams}: Props) {
 
   const targetAreaId = areaIdFromQuery ?? defaultAreaId ?? null
 
-  const sources = [
-    {key: 'nc' as const, sourceUrl: caNcSource}
-    // {key: 'pc' as const, sourceUrl: caPcSource}
-  ]
+  const sources = [{key: 'nc' as const, sourceUrl: caNcSource}]
 
   const sourcesByKey = Object.fromEntries(sources.map((s) => [s.key, s])) as Record<
     (typeof sources)[number]['key'],
     (typeof sources)[number]
   >
 
-  // Find the Day object representing today
-  // const allDays = [...caNcDays, ...caPcDays]
+  // Find the Day object representing today.
+  //
+  // Off-season the district replaces its dated columns with a notice (e.g.
+  // "Open Burning is closed for the season"), so nothing parses to a date. In
+  // that case the first column still carries a real status, so fall back to it
+  // rather than reporting the day as unposted. When the source *does* publish
+  // dated columns we keep requiring a genuine match, so stale data is never
+  // presented as today's.
   const allDays = [...caNcDays]
-  const todayDay = allDays.find((d) => d.date && isSameDay(d.date, today, {in: localTz}))
+  const hasDatedColumns = allDays.some((d) => d.date)
+  const todayDay = hasDatedColumns
+    ? allDays.find((d) => d.date && isSameDay(d.date, today, {in: localTz}))
+    : allDays[0]
 
   // Find the Entry for the specified Area for today’s column
-  const allData = [
-    ...caNcData.map((e) => ({...e, sourceKey: 'nc' as const}))
-    // ...caPcData.map((e) => ({...e, sourceKey: 'pc' as const}))
-  ]
+  const allData = caNcData.map((e) => ({...e, sourceKey: 'nc' as const}))
 
   const todayEntry =
     todayDay && targetAreaId
       ? allData.find((e) => e.areaId === targetAreaId && e.dayId === todayDay.id)
       : undefined
+
+  // When the column isn't a date, its label is the district's own notice.
+  const columnNote = todayDay && !todayDay.date ? todayDay.label : null
 
   const burnValue = todayEntry?.value ?? null
   const isBurnDay = burnValue === true
@@ -117,25 +122,35 @@ export default async function Home({searchParams}: Props) {
       <div className="mb-5">
         {isBurnDay ? (
           <FlameKindling className="h-32 w-32" strokeWidth={1.25} />
-        ) : (
+        ) : isKnown ? (
           <Wind className="h-32 w-32" strokeWidth={1.25} />
+        ) : (
+          <CloudOff className="h-32 w-32" strokeWidth={1.25} />
         )}
       </div>
 
       <h1 className="mb-6 text-4xl">
         {isBurnDay ? (
           "It's a Burn Day!"
-        ) : (
+        ) : isKnown ? (
           <>
             Today is <span className="italic">NOT</span> a Burn Day.
           </>
+        ) : (
+          'Burn Day Status Unavailable'
         )}
       </h1>
 
       <AreaSelect areas={areas} value={targetAreaId} />
 
+      {columnNote ? <p className="mt-4 text-sm opacity-80">{columnNote}</p> : null}
+
       {!isKnown ? (
-        <p className="mt-4 text-sm opacity-80">Today’s status hasn’t been posted yet.</p>
+        <p className="mt-4 text-sm opacity-80">
+          {allDays.length
+            ? 'Today’s status hasn’t been posted yet.'
+            : 'Burn day status is temporarily unavailable.'}
+        </p>
       ) : null}
 
       <div className="fixed top-4 right-4 z-5">

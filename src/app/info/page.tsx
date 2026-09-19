@@ -51,13 +51,6 @@ export default async function Info() {
     days: caNcDays
   } = await getCaNcBurnDaysStatus()
 
-  // const {
-  //   data: caPcData,
-  //   source: caPcSource,
-  //   updatedText: caPcUpdatedText,
-  //   days: caPcDays
-  // } = await getCaPcBurnDaysStatus()
-
   const buildAreas = (data: typeof caNcData) =>
     Array.from(
       new Map(
@@ -70,9 +63,6 @@ export default async function Info() {
 
   const caNcAreas = buildAreas(caNcData)
   const caNcByAreaDay = buildByAreaDay(caNcData)
-
-  // const caPcAreas = buildAreas(caPcData)
-  // const caPcByAreaDay = buildByAreaDay(caPcData)
 
   const correctedNcUpdatedText = caNcUpdatedText
     ? caNcUpdatedText.replace(/this page/i, 'this data source')
@@ -133,53 +123,6 @@ export default async function Info() {
           </TableBody>
         </Table>
       </section>
-
-      {/* <section className="space-y-4 pt-4 sm:pt-8">
-        <header className="space-y-1">
-          <h2 className="text-xl font-semibold">Placer County Air Pollution Control District</h2>
-          <div className="text-sm text-slate-600">
-            Source:{' '}
-            <a className="underline" href={caPcSource} target="_blank" rel="noreferrer">
-              {caPcSource}
-            </a>
-          </div>
-        </header>
-
-        <Table>
-          <TableCaption>{caPcUpdatedText}</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Area</TableHead>
-              {caPcDays.map((d, idx) => (
-                <TableHead key={d.id ?? `pc-day-${idx}`}>
-                  {d.date ? format(d.date, 'MMM d', {in: localTz}) : d.label}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {caPcAreas.map((area) => (
-              <TableRow key={area.areaId}>
-                <TableCell className="align-top break-words whitespace-normal">
-                  <a
-                    className="underline-offset-2 hover:underline focus-visible:underline"
-                    href={`/?areaId=${area.areaId}`}
-                  >
-                    {area.areaSource}
-                  </a>
-                </TableCell>
-
-                {caPcDays.map((day, idx) => {
-                  const val = caPcByAreaDay.get(`${area.areaId}|${day.id}`) ?? null
-                  const displayVal =
-                    val === true ? <YupIcon /> : val === false ? <NopeIcon /> : 'n/a'
-                  return <TableCell key={`${area.areaId}-${idx}`}>{displayVal}</TableCell>
-                })}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </section> */}
     </main>
   )
 }

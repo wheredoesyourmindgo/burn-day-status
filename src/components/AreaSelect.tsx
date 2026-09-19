@@ -56,6 +56,13 @@ const AreaSelect = ({areas, value, onChange, basePath = '/', paramName = 'areaId
     return Object.entries(areasByWeb).sort(([, a], [, b]) => a.webLabel.localeCompare(b.webLabel))
   }, [areasByWeb])
 
+  // Base UI's <Select.Value> renders the raw value, not the selected item's
+  // text, so without this map the trigger shows the bare areaId hash.
+  const itemLabels = useMemo(
+    () => Object.fromEntries(areas.map((area) => [area.areaId, area.areaLabel])),
+    [areas]
+  )
+
   const showIcon = selectedValue.length > 0
 
   return (
@@ -63,6 +70,7 @@ const AreaSelect = ({areas, value, onChange, basePath = '/', paramName = 'areaId
       {showIcon ? <MapPinned className="h-5 w-5 shrink-0" /> : null}
       <Select
         value={selectedValue}
+        items={itemLabels}
         onValueChange={(areaId) => areaId !== null && handleChange(areaId)}
       >
         <SelectTrigger
@@ -72,7 +80,16 @@ const AreaSelect = ({areas, value, onChange, basePath = '/', paramName = 'areaId
           <SelectValue placeholder="Select area" />
         </SelectTrigger>
 
-        <SelectContent alignItemWithTrigger={false}>
+        {/*
+          The popup defaults to the trigger's width (w-(--anchor-width)), which
+          clips longer options whenever a shorter one is selected. Size it to its
+          content instead, never narrower than the trigger and never wider than
+          the viewport allows.
+        */}
+        <SelectContent
+          alignItemWithTrigger={false}
+          className="w-auto max-w-(--available-width) min-w-(--anchor-width)"
+        >
           {sortedGroups.map(([webId, group]) => (
             <SelectGroup key={webId}>
               <SelectLabel>{group.webLabel}</SelectLabel>
