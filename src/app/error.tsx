@@ -17,7 +17,7 @@ export default function Error({
   }, [error])
 
   return (
-    <main className="flex h-dvh flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-purple-500 to-purple-700 px-6 text-center text-white">
+    <main className="flex h-dvh flex-col items-center justify-center overflow-hidden bg-linear-to-b from-purple-500 to-purple-700 px-6 text-center text-white">
       <div className="mb-6">
         <Frown
           className="h-32 w-32 transition-transform hover:scale-105 active:scale-90"

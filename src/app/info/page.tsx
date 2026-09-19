@@ -79,7 +79,7 @@ export default async function Info() {
     : caNcUpdatedText
 
   return (
-    <main className="min-h-dvh space-y-10 bg-gradient-to-b from-slate-100 to-slate-200 p-6 text-slate-900">
+    <main className="min-h-dvh space-y-10 bg-linear-to-b from-slate-100 to-slate-200 p-6 text-slate-900">
       <header className="space-y-2 text-center">
         <h1 className="text-3xl">Burn Day Information</h1>
         <p className="mx-auto max-w-2xl text-sm text-slate-600">
@@ -113,7 +113,7 @@ export default async function Info() {
           <TableBody>
             {caNcAreas.map((area) => (
               <TableRow key={area.areaId}>
-                <TableCell className="align-top break-words whitespace-normal">
+                <TableCell className="align-top wrap-break-word whitespace-normal">
                   <a
                     className="underline-offset-2 hover:underline focus-visible:underline"
                     href={`/?areaId=${area.areaId}`}
