@@ -22,18 +22,44 @@ const CalendarToday = ({date}: {date: Date}) => {
         render={
           <button
             type="button"
-            className="group relative inline-flex items-center justify-center rounded-md focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
+            className="group inline-flex items-center justify-center rounded-md focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
             aria-label={`Show date: ${human}`}
           >
-            <Calendar
-              className="h-18 w-18 text-white/85 transition-[color,transform] duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95"
-              strokeWidth={1}
-            />
-            <span className="font-display pointer-events-none absolute top-7 left-[35px] -translate-x-1/2 text-[13px] font-semibold tracking-wide text-white/85 uppercase transition-[color,transform] duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95">
-              {dayOfWeek}
-            </span>
-            <span className="pointer-events-none absolute inset-0 flex translate-y-[17px] items-center justify-center text-lg font-extrabold text-white/85 transition-[color,transform] duration-150 ease-out group-hover:translate-y-[18px] group-hover:scale-105 group-hover:text-white group-active:scale-95">
-              {dayNum}
+            {/*
+              Scale glyph and label together as one unit. Scaling them
+              separately makes the label drift against the frame mid-hover,
+              since each transforms about its own origin.
+            */}
+            <span className="relative block h-18 w-18 text-white/85 transition-[color,transform] duration-150 ease-out group-hover:scale-105 group-hover:text-white group-active:scale-95">
+              <Calendar className="absolute inset-0 h-full w-full" strokeWidth={1} />
+
+              {/*
+                Centre the label in the calendar's blank body — the area below
+                the header bar. In lucide's 24-unit viewBox the header rule is
+                at y=9 and the frame bottom at y=21, so the body is 37.5% to
+                87.5% from the top (hence bottom-[12.5%]).
+
+                Percentages of the viewBox keep this aligned at any icon size,
+                and survive the glyph being renumbered upstream — the previous
+                hardcoded pixel offsets silently drifted 3px when the frame
+                moved up a unit in lucide 1.47.
+              */}
+              <span className="pointer-events-none absolute inset-x-0 top-[37.5%] bottom-[12.5%] flex flex-col items-center justify-center gap-0.5">
+                {/*
+                  Leading below 1 on purpose: Darumadrop One's ink overflows
+                  its em box, so leading-none reserves more room than the
+                  glyphs need, which pushed "Sat" up over the header rule.
+
+                  So the leading values keep each line's box snug to its
+                  glyphs, and gap-0.5 sets the space between the two lines.
+                  Tune the spacing with the gap — raising the leading instead
+                  would push "Sat" back up toward the rule.
+                */}
+                <span className="font-display text-[13px] leading-2.5 font-semibold tracking-wide uppercase">
+                  {dayOfWeek}
+                </span>
+                <span className="text-lg leading-4 font-extrabold">{dayNum}</span>
+              </span>
             </span>
           </button>
         }
