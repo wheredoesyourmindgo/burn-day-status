@@ -1,7 +1,7 @@
 {
   "name": "burn-day-status",
   "engines": {
-    "node": "24"
+    "node": ">=20.9.0"
   },
   "version": "0.1.0",
   "private": true,
