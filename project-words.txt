@@ -1,0 +1,15 @@
+# Spelling dictionary for burn-day-status.
+# One word per line; '#' starts a comment.
+# The VS Code cSpell 'add to dictionary' quick-fix appends here.
+
+chrono
+Darumadrop
+domhandler
+Norden
+parentheticals
+Plumas
+Portola
+renderable
+shadcn
+tblrxy
+unposted
