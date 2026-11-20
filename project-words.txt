@@ -12,4 +12,5 @@ Portola
 renderable
 shadcn
 tblrxy
+turbopack
 unposted
